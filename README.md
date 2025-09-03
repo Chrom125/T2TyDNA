@@ -174,7 +174,6 @@ nt=16 # Number of threads
 inds=yS1080 # Sample name
 post_filtering_coverage=50 # target covegare for filtlong
 model="r1041_e82_400bps_sup_v4.3.0" # dorado model basecalling
-short_reads="no" # activate it if appropriate. this is not used for polishing.  
 phasing="no" # activate it if appropriate
 eggdb=$HOME/eggnog_data
 
