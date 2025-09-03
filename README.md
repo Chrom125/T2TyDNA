@@ -264,6 +264,8 @@ mamba install -y -c conda-forge -c bioconda \
     ragtag=2.1.0 \
     mummer4=4.0.1 \
     pybedtools \
+    emboss=6.6.0 \
+    seqkit=2.10.1 \
     mash=2.3 \
     r-base=4.3 \
     r-essentials \
@@ -273,6 +275,7 @@ mamba install -y -c conda-forge -c bioconda \
     r-ggplot2 \
     r-viridis \
     r-ggextra \
+    r-ggpubr \
     pip \
     2>&1 | tee conda_install.log
 ```
