@@ -284,4 +284,5 @@ If your database is located elsewhere, update the relevant variable in the confi
 
 ### Additional
 - add annotation step
+- merge contig of chrXII by anchoring the surrounding genes
 
