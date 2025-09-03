@@ -205,6 +205,9 @@ tlo dir:
 ann:
 - annotation results
 
+out:
+- final results:
+
 ```{bash}
 .
 ├── '.genome.fa' # final assembly
