@@ -161,9 +161,9 @@ Edit USER VARIABLE in the ```./scr/config``` :page_with_curl:
 # This configuration file sets parameters for sample      #
 # processing and analysis. Modify these values according  #
 # to your project's requirements.                         #
-#                                                         #
+#                                                       #
 #                                			                    #
-# Contact me at nicolo.tellini.2@gmail.com		            #
+# Contact me at nicolo.tellini.2@gmail.com		         #
 ###########################################################
 
 ##########################################################
