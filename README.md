@@ -14,9 +14,7 @@ This pipeline is optimized for genome assembly of **Saccharomyces** using Oxford
 > ⚠️ **Note**: For larger or more complex genomes, additional sequencing technologies (e.g., PacBio HiFi, Hi-C, ONT ultralong) are recommended. This pipeline is not suited for such cases.
 
 ### Purpose
-This repository is intended for:
-1. Ensuring **reproducibility** of genome assembly and annotation workflows.
-2. Running **new strains** for which both R10.4 are available.
+This repository is intended for de novo assembly of Saccharomyces strains for which R10.4 ONT are available.
 
 > ⚠️ **Note**: This pipeline is provided as-is. It will **not** be adapted for individual cases.
 
@@ -209,20 +207,11 @@ ann:
 
 ```{bash}
 .
-├── OS3.backmap.fa -> /home/ntellini/proj/SGRP5/denovoassembliesont/sunp2/FKS1-assemblies/complete/OS3/tmp/ragtag_output/ragtag.scaffold.fasta
-├── OS3.backmap-ref.png
-├── OS3.cen-pos.flye.txt
-├── OS3.flye.clean.fa
-├── OS3.flye.clean.fa.fai
-├── OS3.flye.raw.fasta
-├── OS3.flye.raw.pdf
-├── OS3.medaka.flye
-├── OS3.medaka.flye.final.fasta -> /home/ntellini/proj/SGRP5/denovoassembliesont/sunp2/FKS1-assemblies/complete/OS3/tmp/OS3.medaka.flye/consensus.fasta
-├── OS3.racon_polished.flye.final.fasta
-├── OS3.sort.mash
-└── ragtag_output
+├── '.genome.fa' # final assembly
+├── '.genome.pdf' # mummerplot against ref genome
+└── '.genome.ann' # annotation
 
-2 directories, 10 files
+3 files, 
 
 ```
 
@@ -282,42 +271,6 @@ mamba install -y -c conda-forge -c bioconda \
 > ⚠️ TeloFinder need to be installed separately following the instructions at [Telofinder Documentation](https://telofinder.readthedocs.io/en/latest/#installation).
 > IMPORTANT: before running ```pip install .``` follow the correction here listed at [issue13](https://github.com/GillesFischerSorbonne/telofinder/issues/13#issuecomment-2124729333)
 
-<details>
-<summary> Tools list </summary>
-Below is the list of required tools and their tested versions:
-
-| Tool         | Version         | Installation Source |
-|--------------|------------------|----------------------|
-| Filtlong     | v0.2.1           | `bioconda`           |
-| Python       | v3.10             | `default`            |
-| Pytorch       | v2.3             | `default`            |
-| numpy       |              | `default`            |
-| h5py       |              | `default`            |
-| mappy       |              | `default`            |
-| NanoPlot     | v1.46.0          | `bioconda`           |
-| Augustus       | v3.5.0             | `bioconda`            |
-| gffread       | v0.12.7             | `bioconda`            |
-| Eggnog-mapper       | v2.1.13             | `bioconda`            |
-| Mash       | v2.3             | `conda-forge`            |
-| Flye         | v2.9.6     | `bioconda`           |
-| seqkit       | v2.10.0          | `bioconda`           |
-| QUAST        | v5.3.0           | `bioconda`           |
-| BUSCO        | v5.8.2           | `bioconda`           |
-| minimap2     | v2.29      | `bioconda`           |
-| racon        | v1.4.20           | `bioconda`           |
-| medaka       | v2.0.1           | `bioconda`           |
-| BWA          | v0.7.19    | `bioconda`           |
-| Samtools     | v1.21            | `bioconda`           |
-| RagTag       | v2.1.0           | `bioconda`           |
-| TeloFinder   | *(custom script)*| see `scripts/`       |
-| MUMmer4      | v4.0.1             | `bioconda`      |
-| Pybedtools       | v0.12.0             | `default`            |
-| r-base       | 4.3             | `default`            |
-| r-essentials       |              | `default`            |
-| pip       |              | `default`            |
-
-</details>
-
 # TODO list
 
 ### Annotation Step
@@ -335,9 +288,5 @@ $HOME/eggnog_db
 If your database is located elsewhere, update the relevant variable in the config file accordingly.
 
 ### Additional
-- write results in a dedicated directory
-- run mummer after assigning the chrs names and orientaion not after flye raw
-- consider removing -l 200 flag from mummer
-- make more explicit ranges for filtering the reads and move to the config file
-- explain the limitation of flye in de novo assembling
-- 
+- add annotation step
+
