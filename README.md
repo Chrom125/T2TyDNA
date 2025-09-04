@@ -264,7 +264,6 @@ Run ```runner.sh``` :runner:
 
 ```{bash}
 bash runner.sh &
-
 ```
 Main results are in :
 
