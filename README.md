@@ -222,6 +222,10 @@ git clone --recursive https://github.com/nicolo-tellini/T2TyDNA.git
 FASTQs data **must** be gziped and suffixed as samplename **.fastq.gz** (ont).
 FASTQs are located inside seq dir. 
 
+### About the rep dir 
+
+Add a ref genome and the annotation according to the instruction in ```./rep/README```
+
 ### How to run
 
 Edit USER VARIABLE in the ```./scr/config``` :page_with_curl: 
