@@ -119,6 +119,63 @@ NO support is given for Windows OS, please read [here](https://towardsdatascienc
 
 ---
 
+## Dependencies
+
+### Installation (recommended)
+
+The pipeline relies on a set of established bioinformatics tools. 
+The installation environment is named **t2tydna**. 
+
+```sh
+mamba create -n t2tydna python=3.10 -y
+mamba activate t2tydna
+```
+
+The tools below can be installed as follows:
+
+```sh
+mamba install -y -c conda-forge -c bioconda \
+    filtlong=0.2.1 \
+    pytorch=2.3 \
+    numpy \
+    h5py \
+    mappy \
+    nanoplot=1.46.0 \
+    augustus=3.5.0 \
+    gffread=0.12.7 \
+    eggnog-mapper=2.1.13 \
+    flye=2.9.6 \
+    seqkit=2.10.0 \
+    quast=5.3.0 \
+    busco=5.8.2 \
+    minimap2=2.29 \
+    racon \
+    medaka=2.0.1 \
+    chopper=0.10.0 \
+    bwa=0.7.19 \
+    samtools=1.21 \
+    repeatmasker=4.2.1 \
+    ragtag=2.1.0 \
+    mummer4=4.0.1 \
+    pybedtools \
+    emboss=6.6.0 \
+    seqkit=2.10.1 \
+    mash=2.3 \
+    r-base=4.3 \
+    r-essentials \
+    r-seqinr \
+    r-R.utils \
+    r-data.table \
+    r-ggplot2 \
+    r-viridis \
+    r-ggextra \
+    r-ggpubr \
+    pip \
+    2>&1 | tee conda_install.log
+```
+> ⚠️ TeloFinder need to be installed separately following the instructions at [Telofinder Documentation](https://telofinder.readthedocs.io/en/latest/#installation).
+> IMPORTANT: before running ```pip install .``` follow the correction here listed at [issue13](https://github.com/GillesFischerSorbonne/telofinder/issues/13#issuecomment-2124729333)
+
 ## Download
  
 :octocat: :
@@ -210,62 +267,7 @@ out:
 
 ```
 
-## Dependencies
 
-### Installation (recommended)
-
-The pipeline relies on a set of established bioinformatics tools. 
-The installation environment is named **t2tydna**. 
-
-```sh
-mamba create -n t2tydna python=3.10 -y
-mamba activate t2tydna
-```
-
-The tools below can be installed as follows:
-
-```sh
-mamba install -y -c conda-forge -c bioconda \
-    filtlong=0.2.1 \
-    pytorch=2.3 \
-    numpy \
-    h5py \
-    mappy \
-    nanoplot=1.46.0 \
-    augustus=3.5.0 \
-    gffread=0.12.7 \
-    eggnog-mapper=2.1.13 \
-    flye=2.9.6 \
-    seqkit=2.10.0 \
-    quast=5.3.0 \
-    busco=5.8.2 \
-    minimap2=2.29 \
-    racon \
-    medaka=2.0.1 \
-    chopper=0.10.0 \
-    bwa=0.7.19 \
-    samtools=1.21 \
-    repeatmasker=4.2.1 \
-    ragtag=2.1.0 \
-    mummer4=4.0.1 \
-    pybedtools \
-    emboss=6.6.0 \
-    seqkit=2.10.1 \
-    mash=2.3 \
-    r-base=4.3 \
-    r-essentials \
-    r-seqinr \
-    r-R.utils \
-    r-data.table \
-    r-ggplot2 \
-    r-viridis \
-    r-ggextra \
-    r-ggpubr \
-    pip \
-    2>&1 | tee conda_install.log
-```
-> ⚠️ TeloFinder need to be installed separately following the instructions at [Telofinder Documentation](https://telofinder.readthedocs.io/en/latest/#installation).
-> IMPORTANT: before running ```pip install .``` follow the correction here listed at [issue13](https://github.com/GillesFischerSorbonne/telofinder/issues/13#issuecomment-2124729333)
 
 # TODO list
 
