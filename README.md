@@ -174,6 +174,8 @@ mamba install -y -c conda-forge -c bioconda \
 ```
 > ⚠️ TeloFinder need to be installed separately following the instructions at [Telofinder Documentation](https://telofinder.readthedocs.io/en/latest/#installation).
 > IMPORTANT: before running ```pip install .``` follow the correction here listed at [issue13](https://github.com/GillesFischerSorbonne/telofinder/issues/13#issuecomment-2124729333)
+> IMPORTANT: If your not instered in telomere length estimates skip this step.
+> IMPORTANT: by default telomere length estimates are disabled, you can activate changing the value of tel_len from F to T.  
 
 ### Annotation Step
 
@@ -263,18 +265,7 @@ bash runner.sh &
 ```
 Main results are in :
 
-tmp dir: 
-- '.flye.clean.fa' is the de novo assembled genome
-- '.flye.raw.pdf' contains MUMmer plot against the reference genome
-
-tlo dir: 
-- telofinder results plots (.pdf) and summary table (.summary.txt)
-
-ann:
-- annotation results
-
 out:
-- final results:
 
 ```{bash}
 .
@@ -285,7 +276,10 @@ out:
 3 files, 
 
 ```
+If you are interested in tel length estimates:
 
+tlo : 
+- telofinder results plots (.pdf) and summary table (.summary.txt)
 
 
 # TODO list
