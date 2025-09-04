@@ -284,10 +284,10 @@ If you are interested in tel length estimates:
 tlo : 
 - telofinder results plots (.pdf) and summary table (.summary.txt)
 
+# Citation
+
+Please, if you use this pipeline or reuse part of it cite this repo, along with all the tools included. 
 
 # TODO list
 
 ### Additional
-- add annotation step
-- merge contig of chrXII by anchoring the surrounding genes
-
