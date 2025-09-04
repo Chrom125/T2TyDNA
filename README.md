@@ -178,7 +178,7 @@ mamba install -y -c conda-forge -c bioconda \
 
 > IMPORTANT: before running ```pip install .``` follow the correction here listed at [issue13](https://github.com/GillesFischerSorbonne/telofinder/issues/13#issuecomment-2124729333)
 
-> IMPORTANT: by default telomere length estimates are disabled, you can activate changing the value of tel_len from F to T in the ```./scr/config``` file.  
+> IMPORTANT: by default telomere length estimates are disabled, you can activate it by changing the value of tel_len from F to T in the ```./scr/config``` file.  
 
 ### Annotation Step
 
