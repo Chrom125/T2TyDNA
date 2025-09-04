@@ -219,7 +219,7 @@ git clone --recursive https://github.com/nicolo-tellini/T2TyDNA.git
 
 ### About the fastqs 
 
-FASTQs data **must** be gziped and suffixed as sample**.fastq.gz** (ont).
+FASTQs data **must** be gziped and suffixed as samplename **.fastq.gz** (ont).
 FASTQs are located inside seq dir. 
 
 ### How to run
