@@ -8,26 +8,28 @@ source $(conda info --base)/etc/profile.d/conda.sh
 
 cd $basedir/tmp
 
-assemblies_clean="$inds.flye.clean.fa"
+fasta="$inds.genome.fa"
 
-for fasta in $assemblies_clean
-do  
-    str=$(echo $fasta | cut -d"." -f1)
-    assembler=$(echo $fasta | cut -d"." -f2)
-    echo "soft masking: $fasta"
-    #conda activate repeatmasker
-    RepeatMasker -s $fasta -lib $repdir/Ty.fa -xsmall -gff
-    #conda deactivate
+ str=$(echo $fasta | cut -d"." -f1)
+ assembler=$(echo $fasta | cut -d"." -f2)
+ echo "soft masking: $fasta"
+ #conda activate repeatmasker
+ RepeatMasker -s $fasta -lib $repdir/Ty.fa -xsmall -gff
+ #conda deactivate
 
-    #conda activate augustus
-    augustus --species=saccharomyces $fasta".masked" --gff3=on --progress=true --softmasking=on > $str"."$assembler".gff3"
-    #conda deactivate
+ #conda activate augustus
+ augustus --species=saccharomyces $fasta".masked" --gff3=on --progress=true --softmasking=on > $str"."$assembler".gff3"
+ #conda deactivate
+   
+ #conda activate gffread
+ gffread $str"."$assembler".gff3" -g $fasta".masked" -y $str".faa" -x $str".cds"
+ #conda deactivate 
+   
+ sed -i 's+\.+_+g' $str".faa"
+ sed -i 's+\.+_+g' $str".cds"
 
-    #conda activate gffread
-    gffread $str"."$assembler".gff3" -g $fasta".masked" -y $str".faa" -x $str".cds"
-    #conda deactivate 
+ #conda activate eggnog
+ emapper.py -i $str".faa" --itype proteins  --cpu 16 --output $str"_annotation"  --data_dir $eggdb -m diamond --tax_scope auto --sensmode fast
+ #conda deactivate
 
-    #conda activate eggnog
-    emapper.py -i $str".faa" --itype proteins  --cpu 16 --output $str"_annotation"  --data_dir $eggdb -m diamond --tax_scope auto --sensmode fast
-    #conda deactivate
-done
+ grep -v "#" $str".genome.gff3" | grep CDS > $str".CDS.gff3"

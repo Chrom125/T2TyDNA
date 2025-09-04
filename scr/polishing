@@ -4,7 +4,7 @@ set -x
 
 source ./config
 
-rounds=1
+rounds=2
 
 cd $basedir/tmp
 

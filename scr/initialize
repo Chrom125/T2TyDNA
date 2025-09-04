@@ -20,7 +20,7 @@ set +a
 
 # Create output directories
 genome_size="12500000"
-mkdir -p  "$asmdir"  "$tmpdir" "$logdir" "$errordir" "$anndir" "$mapdir" "$telodir"
+mkdir -p  "$asmdir"  "$tmpdir" "$logdir" "$errordir" "$mapdir" "$telodir" "$outdir"
 
 > "$logdir/latest" 
 

@@ -14,8 +14,8 @@
 ##########################################################
 
      		 
-nt=8 # Number of threads
-inds=yS832 # Sample name
+nt=16 # Number of threads
+inds=yS199 # Sample name
 post_filtering_coverage=50 # target covegare for filtlong
 model="r1041_e82_400bps_sup_v4.3.0" # dorado model basecalling
 short_reads="no" # activate it if appropriate. this is not used for polishing.  
@@ -32,8 +32,6 @@ seqdir="$basedir/seq"
 
 tmpdir="$basedir/tmp"
 
-scfdir="$basedir/scf"
-
 logdir="$basedir/log" 
 
 repdir="$basedir/rep"
@@ -47,3 +45,5 @@ anndir="$basedir/ann"
 mapdir="$basedir/map"
 
 telodir="$basedir/tlo"
+
+outdir="$basedir/out"

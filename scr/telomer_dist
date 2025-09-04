@@ -10,11 +10,11 @@ cd $basedir/map
 
 mapping="$inds.flye.ont.srt.bam"
 
-seqs_fasta=$(grep ">" $basedir/tmp/"$inds.flye.clean.fa" | sed 's+>++g' | tr '\n' ' ')
+seqs_fasta=$(grep ">" $basedir/tmp/"$inds.genome.fa" | sed 's+>++g' | tr '\n' ' ')
 
-samtools idxstat $mapping | cut -f1-2 | awk '$2 >= 20000' > $inds".idxstat.20kblenmin.txt"
+samtools idxstat $mapping | cut -f1-2 | awk '$2 >= 30000' > $inds".idxstat.30kblenmin.txt"
 
-chrs=$(cat $inds".idxstat.20kblenmin.txt" | cut -f1)
+chrs=$(cat $inds".idxstat.30kblenmin.txt" | cut -f1)
 
 rm anchors.bed 2> /dev/null
 
@@ -22,9 +22,9 @@ rm anchors.bed 2> /dev/null
 for i in $chrs
 do
 echo $i 
-echo -e "$i\t1\t20000" >> anchors.bed
-end=$(grep -w $i $inds".idxstat.20kblenmin.txt" | cut -f2)
-chr_internal_end=$(grep -w $i $inds".idxstat.20kblenmin.txt" | cut -f2 | awk '{print $1 - 20000}')
+echo -e "$i\t1\t30000" >> anchors.bed
+end=$(grep -w $i $inds".idxstat.30kblenmin.txt" | cut -f2)
+chr_internal_end=$(grep -w $i $inds".idxstat.30kblenmin.txt" | cut -f2 | awk '{print $1 - 30000}')
 echo -e "$i\t$chr_internal_end\t$end" >> anchors.bed
 
 done

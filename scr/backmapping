@@ -7,7 +7,7 @@ source ./config
 cd $tmpdir
 
 ## backmapping
-assemblies_clean="$inds.backmap.fa"
+assemblies_clean="$inds.genome.fa"
 fasta=$assemblies_clean
 assembler="flye"
 if [[ $short_reads == "yes" ]]	
@@ -26,7 +26,7 @@ then
     #conda deactivate 
 fi
  #conda activate minimap2
- minimap2 -ax map-ont -t 8 "$basedir/tmp/$fasta" "$seqdir/$inds.filtlong.fastq.gz" > "$mapdir/$inds.$assembler.ont.sam"
+ minimap2 -ax map-ont -t 8 "$basedir/tmp/$fasta" "$seqdir/$inds.fastq.gz" > "$mapdir/$inds.$assembler.ont.sam"
  #conda deactivate
 
  #conda activate samtools 

@@ -17,10 +17,9 @@ options(scipen=999)
 
 # Variables ----
 
-# baseDir <- '/home/ntellini/proj/SGRP5/denovoassembliesont/sunp2/FKS1-assemblies/complete/OS131/tlo'
-# ind="yS1161"
-# allDir <- list.dirs()
-# allFiles <- list.files()
+# baseDir <- '/home/ntellini/proj/SGRP5/nas/G10/tlo'
+# ind="G10"
+
 
 argsVal <- commandArgs(trailingOnly = T)
 baseDir <- as.character(argsVal[1])
@@ -42,6 +41,7 @@ all_tel <- data.frame()
 for (i in files) {
   df_t <-  fread(i,data.table = F)
   if (nrow(df_t) >= 1) {
+    df_t[,"V5"] <- ind
     df_t$file <- i
     chr_coord <- gsub(".clean.txt","",gsub("telo-","",sapply(strsplit(i,"/"),"[[",2)))
     df_t$chr_coord <- chr_coord
@@ -51,14 +51,27 @@ for (i in files) {
   }
 }  
 
+### save this file for statistics ----
+all_tel_forstats <- all_tel
+all_tel_forstats$V4 <- NULL
+all_tel_forstats$file <- NULL
+all_tel_forstats$chr_coord <- NULL
+colnames(all_tel_forstats) <- c("read_name","tel_start","tel_end","strain_name")
+all_tel_forstats$tel_len <-  abs(all_tel_forstats$tel_end - all_tel_forstats$tel_start) + 1
+write.table(all_tel_forstats,file = "tel_info_for_stats.txt",append = F,quote = F,sep = "\t",row.names = F,col.names = F)
+
+#### ----
+
+all_tel$V5 <- NULL
+
 all_tel$diff <- abs(all_tel[,2] - all_tel[,3]) + 1
-all_tel[grep("-1-20000",all_tel$chr_coord),"tel_pos"] <- "L"
-all_tel[grep("-1-20000",all_tel$chr_coord,invert = T),"tel_pos"] <- "R"
+all_tel[grep("-1-30000",all_tel$chr_coord),"tel_pos"] <- "L"
+all_tel[grep("-1-30000",all_tel$chr_coord,invert = T),"tel_pos"] <- "R"
 all_tel$chrs <- sapply(strsplit(all_tel$chr_coord,"-"),"[[",1)
 print(paste0("before len filt: ",nrow(all_tel)))
 all_tel[all_tel$tel_pos == "L","diff"] <- -1 * all_tel[all_tel$tel_pos == "L","diff"]
 all_tel <- all_tel[all_tel$diff >= -1000 & all_tel$diff <= 1000,]
-print(paste0("before len filt: ",nrow(all_tel)))
+print(paste0("after len filt: ",nrow(all_tel)))
 cat(paste0("A step of filtering < -1000 and > 1000 bp is applyed for telomere legth"),file = "readme.txt",append = T)
 
 vline_dfR <- unique(all_tel[all_tel$tel_pos == "R", c("chrs", "tel_pos")])
@@ -209,3 +222,4 @@ df_list <- list(mean_df, sd_df, median_df)
 merged_df <- Reduce(function(x, y) merge(x, y, by = c("chrs","tel_pos")), df_list)
 colnames(merged_df) <- c("chrs","side","mean","sd","median")
 write.table(merged_df,file = "perchromosomeperside-stats.telolen.txt",append = F,quote = F,sep = "\t",row.names = F,col.names = F)
+
