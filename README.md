@@ -181,6 +181,8 @@ The annotation process uses **eggNOG-mapper**, which requires a **local database
 To set it up manually:
 
 ```bash
+mkdir $HOME/eggnog_db
+
 download_eggnog_data.py --data_dir $HOME/eggnog_db
 ```
 The pipeline expects to find the eggNOG database in:
