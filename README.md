@@ -145,11 +145,11 @@ mamba install -y -c conda-forge -c bioconda \
     gffread=0.12.7 \
     eggnog-mapper=2.1.13 \
     flye=2.9.6 \
-    seqkit=2.10.0 \
+    seqkit=2.10.* \
     quast=5.3.0 \
     busco=5.8.2 \
     minimap2=2.29 \
-    racon \
+    racon=1.5.0 \
     medaka=2.0.1 \
     chopper=0.10.0 \
     bwa=0.7.19 \
@@ -174,6 +174,20 @@ mamba install -y -c conda-forge -c bioconda \
 ```
 > ⚠️ TeloFinder need to be installed separately following the instructions at [Telofinder Documentation](https://telofinder.readthedocs.io/en/latest/#installation).
 > IMPORTANT: before running ```pip install .``` follow the correction here listed at [issue13](https://github.com/GillesFischerSorbonne/telofinder/issues/13#issuecomment-2124729333)
+
+### Annotation Step
+
+The annotation process uses **eggNOG-mapper**, which requires a **local database** not included in the repository.  
+To set it up manually:
+
+```bash
+download_eggnog_data.py --data_dir $HOME/eggnog_db
+```
+The pipeline expects to find the eggNOG database in:
+```bash
+$HOME/eggnog_db
+```
+If your database is located elsewhere, update the relevant variable in the config file accordingly.
 
 ## Download
  
@@ -269,20 +283,6 @@ out:
 
 
 # TODO list
-
-### Annotation Step
-
-The annotation process uses **eggNOG-mapper**, which requires a **local database** not included in the repository.  
-To set it up manually:
-
-```bash
-download_eggnog_data.py --data_dir $HOME/eggnog_db
-```
-The pipeline expects to find the eggNOG database in:
-```bash
-$HOME/eggnog_db
-```
-If your database is located elsewhere, update the relevant variable in the config file accordingly.
 
 ### Additional
 - add annotation step
