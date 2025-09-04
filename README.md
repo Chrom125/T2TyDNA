@@ -245,6 +245,7 @@ mamba install -y -c conda-forge -c bioconda \
     chopper=0.10.0 \
     bwa=0.7.19 \
     samtools=1.21 \
+    repeatmasker=4.2.1 \
     ragtag=2.1.0 \
     mummer4=4.0.1 \
     pybedtools \
