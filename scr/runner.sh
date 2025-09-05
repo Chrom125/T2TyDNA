@@ -1,19 +1,9 @@
 #!/bin/bash 
 
-## Simplified Unified Nanopore de novo Saccharomyces Assembly Pipeline
-## description: This script run the de novo assembly of the nano-hq reads generated for the SGRP5 project.
 ## date: 02/01/2025.
-## Warning: the pipeline comes as it is. Many of the tools above have been installed in compartmentalized python and #conda environments; different scripts will attempt to activate and deactivate them. Details are provided along the script.
 ## This is the runner.
 ## This is the pipeline tree. 
-#.
-#├── rep # repo with additional necessary data
-#├── scr # scripts
-#├── asm # assembly
-#├── seq # nanopore raw reads (Dorado basecalled)
-#├── stat # step by step stats
-#├── tmp # a tmp for temporary data
-#└── ann # annotation 
+## date last update: 04/09/2025
 
 set -x 
 
@@ -51,9 +41,14 @@ then
 /usr/bin/time -v bash "$basedir/scr/phasing" > "$basedir/log/phasing.log" 2> "$basedir/log/phasing.err"
 fi
 
+if [[ $tel_len == "yes" ]]
+then
+
 /usr/bin/time -v bash "$basedir/scr/telomer_dist" >  "$basedir/log/telomer_dist.log" 2> "$basedir/log/telomer_dist.err"
 
 /usr/bin/time -v Rscript "$basedir/scr/telomer_dist_plot.r" "$telodir" "$inds" > "$basedir/log/telomer_dist_plot.log" 2> "$basedir/log/telomer_dist_plot.err"
+
+fi
 
 /usr/bin/time -v bash "$basedir/scr/annotation" >  "$basedir/log/annotation.log" 2> "$basedir/log/annotation.err"
 
