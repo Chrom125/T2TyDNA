@@ -192,6 +192,14 @@ mamba install clair3 -c bioconda -c conda-forge
 
 mamba deactivate
 
+mamba create -n hapcut2
+
+mamba activate hapcut2
+
+mamba install hapcut2 -c bioconda -c conda-forge
+
+mamba deactivate
+
 ```
 
 ### Annotation Step
