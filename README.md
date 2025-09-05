@@ -189,6 +189,8 @@ mamba activate clair3
 
 mamba install clair3 -c bioconda -c conda-forge
 
+mamba deactivate
+
 ```
 
 ### Annotation Step
@@ -273,6 +275,7 @@ tel_len="no" # activate it if appropriate
 eggdb=$HOME/eggnog_db # change only if you placed eggnog_db in a different location
 
 ```
+Be sure ```t2tydna``` env is active. 
 
 Run ```runner.sh``` :runner: 
 
