@@ -29,7 +29,7 @@ fasta="$inds.genome.fa"
  sed -i 's+\.+_+g' $str".cds"
 
  #conda activate eggnog
- emapper.py -i $str".faa" --itype proteins  --cpu 16 --output $str"_annotation"  --data_dir $eggdb -m diamond --tax_scope auto --sensmode fast
+ emapper.py -i $str".faa" --itype proteins  --cpu $nt --output $str"_annotation"  --data_dir $eggdb -m diamond --tax_scope auto --sensmode fast --override
  #conda deactivate
 
  grep -v "#" $str".genome.gff3" | grep CDS > $str".CDS.gff3"
