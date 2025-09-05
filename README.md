@@ -172,13 +172,24 @@ mamba install -y -c conda-forge -c bioconda \
     pip \
     2>&1 | tee conda_install.log
 ```
-> IMPORTANT: If your not instered in telomere length estimates skip this step.
+> ⚠️ IMPORTANT: If your not instered in telomere length estimates skip this step.
 
-> ⚠️ TeloFinder need to be installed separately following the instructions at [Telofinder Documentation](https://telofinder.readthedocs.io/en/latest/#installation).
+> TeloFinder need to be installed separately following the instructions at [Telofinder Documentation](https://telofinder.readthedocs.io/en/latest/#installation).
 
-> IMPORTANT: before running ```pip install .``` follow the correction here listed at [issue13](https://github.com/GillesFischerSorbonne/telofinder/issues/13#issuecomment-2124729333)
+> Before running ```pip install .``` follow the correction here listed at [issue13](https://github.com/GillesFischerSorbonne/telofinder/issues/13#issuecomment-2124729333)
 
-> IMPORTANT: by default telomere length estimates are disabled, you can activate it by changing the value of tel_len from "no" to "yes" in the ```./scr/config``` file.  
+> By default telomere length estimates are disabled, you can activate it by changing the value of tel_len from "no" to "yes" in the ```./scr/config``` file.
+
+> ⚠️ IMPORTANT: If your not instered in genome phasing skip this step.
+
+```sh
+mamba create -n clair3
+
+mamba activate clair3
+
+mamba install clair3 -c bioconda -c conda-forge
+
+```
 
 ### Annotation Step
 
