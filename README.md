@@ -15,7 +15,7 @@ This pipeline is optimized for genome assembly of **Saccharomyces** using Oxford
 
 ### Purpose
 This repository is intended for de novo assembly of Saccharomyces strains for which (by default) R10.4 ONT are available.
-Older chemistries require to install the appropriate version of medaka (see Dependencies below), increase the round of polishing (```scr/polishing```) round with racon (up to 3 should be sufficient), change flye settings in ```scr/config```.
+Older chemistries require installing the appropriate version of medaka (see Dependencies below), increasing the round of polishing up to 3 and, change flye settings in ```scr/config```.
 
 > ⚠️ **Note**: This pipeline is provided as-is. It will **not** be adapted for individual cases.
 
