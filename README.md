@@ -9,12 +9,13 @@
 [![commit](https://img.shields.io/github/last-commit/nicolo-tellini/sunp?color=yellow&style=plastic)](https://github.com/nicolo-tellini/T2TyDNA/graphs/commit-activity)
 
 ## Description
-This pipeline is optimized for genome assembly of **Saccharomyces** using Oxford Nanopore R10.4 reads. If your data comes from older Nanopore chemistries, the workflow will require adjustments that are not provided by default; see the section blablabla to adjust the pipeline according to your chemistry. The pipeline can also be applied to other yeast species; the scripts need to be adjusted to meet the features of the organism. See the section below to discover possible applications **beyond Saccharomyces**.
+This pipeline is optimized for genome assembly of **Saccharomyces** using Oxford Nanopore R10.4 reads.
 
 > ⚠️ **Note**: For larger or more complex genomes, additional sequencing technologies (e.g., PacBio HiFi, Hi-C, ONT ultralong) are recommended. This pipeline is not suited for such cases.
 
 ### Purpose
-This repository is intended for de novo assembly of Saccharomyces strains for which R10.4 ONT are available.
+This repository is intended for de novo assembly of Saccharomyces strains for which (by default) R10.4 ONT are available.
+Older chemistries require to install the appropriate version of medaka (see Dependencies below), increase the round of polishing (```scr/polishing```) round with racon (up to 3 should be sufficient), change flye settings in ```scr/config```.
 
 > ⚠️ **Note**: This pipeline is provided as-is. It will **not** be adapted for individual cases.
 
