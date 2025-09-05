@@ -7,33 +7,41 @@ source ./config
 cd $mapdir
 
 ## call variants
-fasta=$inds".backmap.fa"
+assemblies_clean="$inds.genome.fa"
+fasta=$assemblies_clean
+assembler="flye"
 
+samtools faidx $tmpdir/$fasta
+
+eval "$(mamba shell hook --shell bash)"
+
+mamba activate clair3
 #conda activate clair3
 MODEL_NAME="r1041_e82_400bps_sup_v500"
 run_clair3.sh --bam="$mapdir/$inds.$assembler.ont.srt.bam" --ref_fn="$basedir/tmp/$fasta" --threads=16 --platform="ont" --output=$inds"_clair3" --model_path="${CONDA_PREFIX}/bin/models/${MODEL_NAME}" --include_all_ctgs
-#conda deactivate 
+mamba deactivate 
 
-bgzip $mapdir/$inds".flye.vcf"
+ln -s $mapdir/$inds"_clair3/merge_output.vcf.gz" $mapdir/$inds".flye.vcf.gz"
+
+#bgzip $mapdir/$inds".flye.vcf"
 
 #conda activate bcftools 
 
 bcftools index $mapdir/$inds".flye.vcf.gz"
 
-bcftools view -i 'TYPE="snp" || (TYPE="indel" && strlen(REF)<2 && strlen(ALT)<2) && QUAL>=20' merge_output.vcf.gz  | bcftools view --max-alleles 2 -Oz1 -o $mapdir/$inds".flye.filt.vcf.gz"
+bcftools view -i 'TYPE="snp" || (TYPE="indel" && strlen(REF)<2 && strlen(ALT)<2) && QUAL>=20'  $mapdir/$inds".flye.vcf.gz"  | bcftools view --max-alleles 2 -Oz1 -o $mapdir/$inds".flye.filt.vcf.gz"
 #conda deactivate 
 
 gzip -d $mapdir/$inds".flye.filt.vcf.gz"
 
 ## hapcut2
-#conda activate hapcut2
-
+mamba activate hapcut2
 extractHAIRS --ont 1 --bam "$mapdir/$inds.$assembler.ont.srt.bam" --VCF $mapdir/$inds".flye.filt.vcf" --out $inds".frags" --ref "$basedir/tmp/$fasta"
 
 HAPCUT2 --fragments $inds".frags" --VCF $mapdir/$inds".flye.filt.vcf" --output $inds".haplos"
+mamba deactivate
 
 ## bcftools consensus
-
 bgzip $inds.haplos.phased.VCF
  
 bcftools index $inds.haplos.phased.VCF.gz
