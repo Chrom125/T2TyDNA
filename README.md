@@ -256,10 +256,10 @@ inds=yS199 # Sample name
 post_filtering_coverage=30 # target covegare for filtlong
 model="r1041_e82_400bps_sup_v4.3.0" # dorado model basecalling
 
-short_reads="no" # activate it if appropriate. This is not used for polishing.  
+short_reads="no" # activate it if appropriate. This is not used for polishing but for monitoring artefacts.  
 phasing="no" # activate it if appropriate
 tel_len="no" # activate it if appropriate
-eggdb=$HOME/eggnog_db
+eggdb=$HOME/eggnog_db # change only if you placed eggnog_db in a different location
 
 ```
 
