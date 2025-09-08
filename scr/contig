@@ -4,9 +4,12 @@ set -x
 
 source ./config
 
+ont_type=$1 
+genome_size=$2
+
 #conda activate flye
 # assembly 
-flye --nano-hq $seqdir/$inds.filtlong.fastq.gz --genome-size 12.5m --threads 32 -i 2 --out-dir $asmdir/flye
+flye $ont_type $seqdir/$inds.filtlong.fastq.gz --genome-size $genome_size --threads 32 -i 2 --out-dir $asmdir/flye
 #conda deactivate
 
 #conda activate seqkit
