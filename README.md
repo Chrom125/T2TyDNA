@@ -193,6 +193,7 @@ pip install .
 ```
 
 > By default telomere length estimates are disabled, you can activate it by changing the value of tel_len from "no" to "yes" in the ```./scr/config``` file.
+> Telofinder accumulates pybedtools files on the temp dir consider removing that files at the end of each run. 
 
 > ⚠️ IMPORTANT: If you are not instered in genome phasing skip this step.
 
