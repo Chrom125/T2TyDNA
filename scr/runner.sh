@@ -15,9 +15,9 @@ source ./config
 
 /usr/bin/time -v Rscript "$basedir/scr/nanoplot_plot.r" "$basedir" "$inds" > "$basedir/log/nanoplot_plot.log" 2> "$basedir/log/nanoplot_plot.err"
 
-/usr/bin/time -v bash "$basedir/scr/contig" > "$basedir/log/contig.log" 2> "$basedir/log/contig.err"
+/usr/bin/time -v bash "$basedir/scr/contig" $ont_type $genome_size > "$basedir/log/contig.log" 2> "$basedir/log/contig.err"
 
-/usr/bin/time -v bash "$basedir/scr/polishing" >  "$basedir/log/polishing.log" 2> "$basedir/log/polishing.err"
+/usr/bin/time -v bash "$basedir/scr/polishing" $rounds >  "$basedir/log/polishing.log" 2> "$basedir/log/polishing.err"
 
 /usr/bin/time -v bash "$basedir/scr/mash.sh" >  "$basedir/log/mash.log" 2> "$basedir/log/mash.err"
 
