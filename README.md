@@ -185,9 +185,12 @@ mamba activate telofinder
 git clone https://github.com/GillesFischerSorbonne/telofinder.git
 
 cd telofinder
-
 ```
 > Before running ```pip install .``` follow the correction here listed at [issue13](https://github.com/GillesFischerSorbonne/telofinder/issues/13#issuecomment-2124729333)
+> From the parental telofinder dir run:
+```
+pip install .
+```
 
 > By default telomere length estimates are disabled, you can activate it by changing the value of tel_len from "no" to "yes" in the ```./scr/config``` file.
 
@@ -209,7 +212,6 @@ mamba activate hapcut2
 mamba install hapcut2 -c bioconda -c conda-forge
 
 mamba deactivate
-
 ```
 ### Annotation Step
 
