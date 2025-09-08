@@ -286,7 +286,7 @@ Edit USER VARIABLE in the ```./scr/config``` :page_with_curl:
 ##########################################################
  
 nt=16 # Number of threads
-inds=sample1 # Sample name
+inds=samplename # Sample name
 post_filtering_coverage=40 # target covegare for filtlong
 model="r1041_e82_400bps_sup_v4.3.0" # dorado model basecalling
 
