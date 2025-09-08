@@ -274,14 +274,17 @@ Edit USER VARIABLE in the ```./scr/config``` :page_with_curl:
 ##########################################################
  
 nt=16 # Number of threads
-inds=yS199 # Sample name
-post_filtering_coverage=30 # target covegare for filtlong
+inds=sample1 # Sample name
+post_filtering_coverage=40 # target covegare for filtlong
 model="r1041_e82_400bps_sup_v4.3.0" # dorado model basecalling
 
-short_reads="no" # activate it if appropriate. This is not used for polishing but for monitoring artefacts.  
+ont_type="--nano-hq"
+rounds=2 # rounds of long-read based polishing
+genome_size="12.5m"
+short_reads="no" # activate it if appropriate. This is not used for polishing.  
 phasing="no" # activate it if appropriate
 tel_len="no" # activate it if appropriate
-eggdb=$HOME/eggnog_db # change only if you placed eggnog_db in a different location
+eggdb=$HOME/eggnog_db
 
 ```
 Be sure ```t2tydna``` env is active. 
