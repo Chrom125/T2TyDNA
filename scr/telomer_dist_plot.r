@@ -17,8 +17,8 @@ options(scipen=999)
 
 # Variables ----
 
-# baseDir <- '/home/ntellini/proj/SGRP5/nas/G10/tlo'
-# ind="G10"
+#  baseDir <- '/home/nico/nas/A10/tlo'
+#  ind="G10"
 
 
 argsVal <- commandArgs(trailingOnly = T)
@@ -55,9 +55,14 @@ for (i in files) {
 all_tel_forstats <- all_tel
 all_tel_forstats$V4 <- NULL
 all_tel_forstats$file <- NULL
+all_tel_forstats$chr <- sapply(strsplit(all_tel_forstats$chr_coord ,"_"),"[[",1)
+all_tel_forstats$placement <- sapply(strsplit(all_tel_forstats$chr_coord ,"_"),"[[",2)
+all_tel_forstats[,"side"] <- "R"
+all_tel_forstats[grep("1-20000",all_tel_forstats$placement),"side"] <- "L"
 all_tel_forstats$chr_coord <- NULL
-colnames(all_tel_forstats) <- c("read_name","tel_start","tel_end","strain_name")
-all_tel_forstats$tel_len <-  abs(all_tel_forstats$tel_end - all_tel_forstats$tel_start) + 1
+all_tel_forstats$placement <- NULL
+colnames(all_tel_forstats) <- c("read_name","start","end","strain_name","chr","side")
+all_tel_forstats$tel_len <-  abs(all_tel_forstats$end - all_tel_forstats$start) + 1
 write.table(all_tel_forstats,file = "tel_info_for_stats.txt",append = F,quote = F,sep = "\t",row.names = F,col.names = F)
 
 #### ----
@@ -65,8 +70,8 @@ write.table(all_tel_forstats,file = "tel_info_for_stats.txt",append = F,quote = 
 all_tel$V5 <- NULL
 
 all_tel$diff <- abs(all_tel[,2] - all_tel[,3]) + 1
-all_tel[grep("-1-30000",all_tel$chr_coord),"tel_pos"] <- "L"
-all_tel[grep("-1-30000",all_tel$chr_coord,invert = T),"tel_pos"] <- "R"
+all_tel[grep("-1-20000",all_tel$chr_coord),"tel_pos"] <- "L"
+all_tel[grep("-1-20000",all_tel$chr_coord,invert = T),"tel_pos"] <- "R"
 all_tel$chrs <- sapply(strsplit(all_tel$chr_coord,"-"),"[[",1)
 print(paste0("before len filt: ",nrow(all_tel)))
 all_tel[all_tel$tel_pos == "L","diff"] <- -1 * all_tel[all_tel$tel_pos == "L","diff"]
@@ -222,4 +227,3 @@ df_list <- list(mean_df, sd_df, median_df)
 merged_df <- Reduce(function(x, y) merge(x, y, by = c("chrs","tel_pos")), df_list)
 colnames(merged_df) <- c("chrs","side","mean","sd","median")
 write.table(merged_df,file = "perchromosomeperside-stats.telolen.txt",append = F,quote = F,sep = "\t",row.names = F,col.names = F)
-
