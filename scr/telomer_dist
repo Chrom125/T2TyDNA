@@ -1,0 +1,69 @@
+#!/bin/bash
+
+set -x
+
+source ./config
+
+source $(conda info --base)/etc/profile.d/conda.sh
+
+cd $basedir/map
+
+mapping="$inds.flye.ont.srt.bam"
+
+seqs_fasta=$(grep ">" $basedir/tmp/"$inds.genome.fa" | sed 's+>++g' | tr '\n' ' ')
+
+samtools idxstat $mapping | cut -f1-2 | awk '$2 >= 30000' > $inds".idxstat.30kblenmin.txt"
+
+chrs=$(cat $inds".idxstat.30kblenmin.txt" | cut -f1)
+
+rm anchors.bed 2> /dev/null
+
+## create bed for extremity
+for i in $chrs
+do
+echo $i 
+echo -e "$i\t1\t30000" >> anchors.bed
+end=$(grep -w $i $inds".idxstat.30kblenmin.txt" | cut -f2)
+chr_internal_end=$(grep -w $i $inds".idxstat.30kblenmin.txt" | cut -f2 | awk '{print $1 - 30000}')
+echo -e "$i\t$chr_internal_end\t$end" >> anchors.bed
+
+done
+
+## extract reads for each extremity 
+while read -r line 
+do  
+chr=$(echo $line | cut -d" " -f1)
+start=$(echo $line | cut -d" " -f2) 
+end=$(echo $line | cut -d" " -f3);  
+echo $chr:$start-$end
+samtools view  -b $inds.flye.ont.srt.bam $chr:$start-$end -q 30 -o $basedir/tlo/$inds"."$chr"."$start"-"$end".bam"
+done < anchors.bed
+
+cd $basedir/tlo
+## from bam to fasta files
+for i in $(ls *bam)
+do
+
+chr=$(echo $i | cut -d"." -f2)
+coord=$(echo $i | cut -d"." -f3)
+echo "extracting fasta $chr:$coord"
+samtools fasta $i > $inds"."$chr"."$coord".fasta"
+
+done
+
+## assessment fasta
+conda activate telofinder 
+for i in $(ls *fasta)
+do
+
+chr=$(echo $i | cut -d"." -f2)
+coord=$(echo $i | cut -d"." -f3)
+telofinder -t 10 -o "telo-"$chr"-"$coord $i 2> /dev/null
+
+cd "telo-"$chr"-"$coord
+grep -w "term" telom_merged.bed >  "telo-"$chr"-"$coord".clean.txt"
+
+cd $basedir/tlo
+
+done
+conda deactivate 
