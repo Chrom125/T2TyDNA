@@ -1,17 +1,122 @@
+<p align="center">
+  <img src="https://github.com/nicolo-tellini/T2TyDNA/blob/main/logot2tydna.png" alt="logo pipe" width="30%"/>
+</p>
+
+> ⚠️⚠️⚠️ THIS DIRECTORY IS UNDER CONSTRUCTION AND THE PIPELINE UNDER IMPROVEMENT AND OPTIMIZATION 
+
 [![Licence](https://img.shields.io/github/license/nicolo-tellini/sunp?style=plastic)](https://github.com/nicolo-tellini/T2TyDNA/blob/main/LICENSE)
 [![Release](https://img.shields.io/github/v/release/nicolo-tellini/sunp?style=plastic)](https://github.com/nicolo-tellini/T2TyDNA/releases)
 [![commit](https://img.shields.io/github/last-commit/nicolo-tellini/sunp?color=yellow&style=plastic)](https://github.com/nicolo-tellini/T2TyDNA/graphs/commit-activity)
 
 ## Description
-This pipeline is optimized for estimating the telomere length distribution of *Saccharomyces* strains evolved in the lab using Oxford Nanopore R10.4 reads.
+This pipeline is optimized for genome assembly of **Saccharomyces** using Oxford Nanopore R10.4 reads.
 
-> ⚠️ **Note**: This pipeline is provided as-is.
+> ⚠️ **Note**: For larger or more complex genomes, additional sequencing technologies (e.g., PacBio HiFi, Hi-C, ONT ultralong) are recommended. This pipeline is not suited for such cases.
+
+### Purpose
+This repository is intended for de novo assembly of Saccharomyces strains for which (by default) R10.4 ONT are available.
+Older chemistries require installing the appropriate version of medaka (see Dependencies below), increasing the round of polishing up to 3 and, change flye settings in ```scr/config```.
+
+> ⚠️ **Note**: This pipeline is provided as-is. It will **not** be adapted for individual cases.
+
+---
+<details>
+<summary> Old workflow </summary>
+## Workflow
+The pipeline consists of multiple sequential modules to generate a T2T genome assembly, polishing, quality control, telomere length estimation, ORFs identification and functional annotation. 
+Below is an overview of each step:
+
+### 1. Initialization & Pre-processing
+
+- **`initiate`**: Sets up the directory structure and required files.
+- **`precontig`**: Filters long reads before assembly, based on user-defined thresholds  
+  *(default: minimum read length = 10 kb,  average read quality 15, target coverage = 50×)*.
+
+  <details>
+  <summary> Q len plot </summary>
+    <p align="center">
+      <img src="https://github.com/nicolo-tellini/T2TyDNA/blob/main/qlenplot.png" alt="logo pipe" width="50%"/>
+    </p>
+  </details>
+
+### 2. Assembly
+
+- **`contig`**: Performs de novo assembly using **Flye**.
+- **`QUAST`** and **`BUSCO`**: Evaluate assembly quality and gene completeness.
+- - **`mash`** and **`MUMmer`**
+
+### 3. Intermediate Assessment
+
+- **`assessment_after_contigs`** (**`mash`** and **`MUMmer`**): Aligns the draft assembly to a reference genome using **MUMmer**  
+  *(reference genomes aree placed in the `rep/` directory and automatically selected)*.
+
+### 4. Polishing
+
+A three-step polishing process:
+
+- **`minimap2` + `racon`**: One round of correction with ONT reads.
+- **`medaka`**: Generates high-quality consensus (one round).
+- **`assign_cent`**: Extracts centromere positions from the reference annotation and maps them to the new assembly.
+-  **`reorderscaffolds`**: Names and orders contigs based on centromere positions.
+
+> If multiple centromeres are found on the same contig (e.g., `IV_XIII`), this likely indicates an assembly artefact requiring manual inspection.
+
+### 5. Telomere Length Estimation
+
+- **`backmapping`**: Filtered ONT reads are mapped back to the de novo assembled genome.
+- **`samtools`**: Extraction of reads mapping at the beginning and end of the chromosome (those covering a range of 20kb)
+- **`telofinder`**: Detects telomeric repeats from the reads (Only terminal signals are maintained).
+
+<details>
+  <summary> TEL len plot </summary>
+  <p align="center">
+    <img src="https://github.com/nicolo-tellini/T2TyDNA/blob/main/tel_dist.png" alt="logo pipe" width="30%"/>
+  </p>
+</details>
+
+### 6. Backmapping & Annotation
+
+- **`backmapping`**: Maps filtered ONT reads back to the polished assembly. Useful to identify structural anomalies or coverage issues.
+- **`annotation`**: Fast functional annotation with **eggNOG-mapper** for gene content overview.
+  
+  > ⚠️ **Note**: This is not intended to be a comprehensive genome annotation.
+
+---
+
+## Artefact Detection
+
+Mummer plots help detect artefacts. Manual curation is necessary if the alignment shows the following patterns:
+
+1. Telomers embedded in central chrs positions
+  <details>
+  <summary> Artefact from MUMmer </summary>
+    <p align="center">
+      <img src="https://github.com/nicolo-tellini/T2TyDNA/blob/main/artefact.png" alt="Artifact ONT" width="70%"/>
+    </p>
+</details>
+
+2. Local accumulation of unexpected SNPs  
+3. Abrupt coverage drops  
+4. Extensive soft/hard read clipping
+
+  <details>
+  <summary> Artefact from mapping </summary>
+    <p align="center">
+      <img src="https://github.com/nicolo-tellini/sunp/blob/main/artifact_eaxample.png" alt="Artifact ONT"/>
+    </p>
+</details>
+
+[TiGmint](https://github.com/bcgsc/tigmint) can support manual postprocessing, but it is not implemented in the pipeline as its use is case-specific. 
+
+</details>
 
 ---
 
 ## Issues & Support
 
 If you encounter problems, please open an issue and include the full contents of the logs directory.
+
+NO support is given for Windows OS, please read [here](https://towardsdatascience.com/why-do-bioinformaticians-avoid-using-windows-c5acb034f63c/).
 
 ---
 
@@ -20,10 +125,10 @@ If you encounter problems, please open an issue and include the full contents of
 ### Installation (recommended)
 
 The pipeline relies on a set of established bioinformatics tools. 
-The installation environment is named **donatelo**. 
+The installation environment is named **t2tydna**. 
 
 ```sh
-mamba create -n t2tydna -c conda-forge -c bioconda python=3.10 -y 
+mamba create -n t2tydna python=3.10 -y
 mamba activate t2tydna
 ```
 
@@ -38,6 +143,8 @@ mamba install -y -c conda-forge -c bioconda \
     mappy \
     nanoplot=1.46.0 \
     augustus=3.5.0 \
+    gffread=0.12.7 \
+    eggnog-mapper=2.1.13 \
     flye=2.9.6 \
     seqkit=2.10.* \
     quast=5.3.0 \
@@ -48,7 +155,7 @@ mamba install -y -c conda-forge -c bioconda \
     chopper=0.10.0 \
     bwa=0.7.19 \
     samtools=1.21 \
-    ragtag=2.1.0 \
+    repeatmasker=4.2.1 \
     mummer4=4.0.1 \
     pybedtools \
     emboss=6.6.0 \
@@ -66,7 +173,9 @@ mamba install -y -c conda-forge -c bioconda \
     pip \
     2>&1 | tee conda_install.log
 ```
-> ⚠️ IMPORTANT: TeloFinder need to be installed separately on a dirrente env following the instructions:
+> ⚠️ IMPORTANT: If you are not instered in telomere length estimates skip this step.
+
+> TeloFinder need to be installed separately on a dirrente env following the instructions:
 
 ```
 mamba create -n telofinder python=3.10
@@ -83,16 +192,50 @@ cd telofinder
 pip install .
 ```
 
-> Telofinder accumulates pybedtools files on the temp dir consider removing that files at the end of each run.
+> By default telomere length estimates are disabled, you can activate it by changing the value of tel_len from "no" to "yes" in the ```./scr/config``` file.
+> Telofinder accumulates pybedtools files on the temp dir consider removing that files at the end of each run. 
 
-## Download
+> ⚠️ IMPORTANT: If you are not instered in genome phasing skip this step.
+
+```sh
+mamba create -n clair3
+
+mamba activate clair3
+
+mamba install clair3 -c bioconda -c conda-forge
+
+mamba deactivate
+
+mamba create -n hapcut2
+
+mamba activate hapcut2
+
+mamba install hapcut2 -c bioconda -c conda-forge
+
+mamba deactivate
+```
+### Annotation Step
+
+The annotation process uses **eggNOG-mapper**, which requires a **local database** not included in the repository.  
+To set it up manually:
+
+```bash
+mkdir -p $HOME/eggnog_db
+
+download_eggnog_data.py --data_dir $HOME/eggnog_db
+```
+The pipeline expects to find the eggNOG database in:
+```bash
+$HOME/eggnog_db
+```
+If your database is located elsewhere, update the relevant variable in the config file accordingly.
 
 ## Download
  
 :octocat: :
   
 ```sh
-git clone --branch donatelo https://github.com/nicolo-tellini/T2TyDNA.git
+git clone --recursive https://github.com/nicolo-tellini/T2TyDNA.git
 ```
 
 ## Content
@@ -120,9 +263,7 @@ FASTQs are located inside seq dir.
 
 ### About the rep dir 
 
-Add a ref genome and the annotation according to the instruction in ```./rep/README```. 
-
-```CBS432.genome.fa``` and ```CBS432.genome.gff3``` are an example while blablabla **must** be kept.
+Add a ref genome and the annotation according to the instruction in ```./rep/README```
 
 ### How to run
 
@@ -148,9 +289,14 @@ nt=16 # Number of threads
 inds=samplename # Sample name
 post_filtering_coverage=40 # target covegare for filtlong
 model="r1041_e82_400bps_sup_v4.3.0" # dorado model basecalling
+
 ont_type="--nano-hq"
 rounds=2 # rounds of long-read based polishing
 genome_size="12.5m"
+short_reads="no" # activate it if appropriate. This is not used for polishing.  
+phasing="no" # activate it if appropriate
+tel_len="no" # activate it if appropriate
+eggdb=$HOME/eggnog_db
 
 ```
 Be sure ```t2tydna``` env is active. 
@@ -158,16 +304,30 @@ Be sure ```t2tydna``` env is active.
 Run ```runner.sh``` :runner: 
 
 ```{bash}
-bash runner.sh > runner.log 2> runner.err &
+bash runner.sh &
 ```
 Main results are in :
 
 out:
 
-- plot (.pdf), genome (.fa) and annotation (.gff3)
+```{bash}
+.
+├── '.genome.fa' # final assembly
+├── '.genome.pdf' # mummerplot against ref genome
+└── '.genome.ann' # annotation
+
+3 files, 
+
+```
+If you are interested in tel length estimates:
+
+tlo : 
+- telofinder results plots (.pdf) and summary table (.summary.txt)
 
 # Citation
 
 Please, if you use this pipeline or reuse part of it cite this repo, along with all the tools included. 
 
 # TODO list
+
+### Additional
