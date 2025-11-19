@@ -38,7 +38,7 @@ df_ann_emapper <- df_ann_emapper[,c(1,2,4,6,9)]
 df_ann_emapper[,"taxid"] <- sapply(strsplit(df_ann_emapper[,2],split = "\\."),"[[",1)
 df_ann_emapper[,"gene_name"] <- sapply(strsplit(df_ann_emapper[,2],split = "\\."),"[[",2)
 
-df_cds <- fread("yS199.CDS.gff3",data.table = F)
+df_cds <- fread(paste0(str,".CDS.gff3"),data.table = F)
 df_cds$matching_name <- gsub("\\.","_",sapply(strsplit(df_cds[,ncol(df_cds)],"="),"[[",3) )
 
 merged_tab <- base::merge(df_cds,df_ann_emapper,by.x ="matching_name",by.y = "V1",all = T)
