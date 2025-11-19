@@ -86,6 +86,8 @@ pip install .
 > Telofinder accumulates pybedtools files on the temp dir consider removing that files at the end of each run.
 
 ## Download
+
+## Download
  
 :octocat: :
   
@@ -118,7 +120,9 @@ FASTQs are located inside seq dir.
 
 ### About the rep dir 
 
-Add a ref genome and the annotation according to the instruction in ```./rep/README```
+Add a ref genome and the annotation according to the instruction in ```./rep/README```. 
+
+```CBS432.genome.fa``` and ```CBS432.genome.gff3``` are an example while blablabla **must** be kept.
 
 ### How to run
 
@@ -144,24 +148,23 @@ nt=16 # Number of threads
 inds=samplename # Sample name
 post_filtering_coverage=40 # target covegare for filtlong
 model="r1041_e82_400bps_sup_v4.3.0" # dorado model basecalling
-
 ont_type="--nano-hq"
 rounds=2 # rounds of long-read based polishing
 genome_size="12.5m"
 
 ```
-Be sure ```donatelo``` env is active. 
+Be sure ```t2tydna``` env is active. 
 
 Run ```runner.sh``` :runner: 
 
 ```{bash}
-bash runner.sh &
+bash runner.sh > runner.log 2> runner.err &
 ```
 Main results are in :
 
-tlo:
+out:
 
-- telofinder results plots (.pdf) and tables (.txt)
+- plot (.pdf), genome (.fa) and annotation (.gff3)
 
 # Citation
 
