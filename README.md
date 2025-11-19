@@ -264,6 +264,8 @@ FASTQs are located inside seq dir.
 ### About the rep dir 
 
 Add a ref genome and the annotation according to the instruction in ```./rep/README```
+Please note that **YLR163C.CBS432.fa MUST be kept**.
+YLR163C is the gene located immediately after the rDNA on chromosome XII. It is mapped against the contigs to identify which contig represents the second half of chromosome XII, which is then merged with the first part. Be aware that this step **may introduce artefacts, so visual inspection and manual curation are required at the end of the run**. The PDF file in the  ```out ``` directory can be used to assess the correctness of this step.
 
 ### How to run
 
