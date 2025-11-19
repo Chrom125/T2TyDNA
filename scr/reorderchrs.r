@@ -43,6 +43,6 @@ fasta <- read.fasta("goodorderchrs.fa",seqtype = "DNA",forceDNAtolower = F, set.
   reordered_fasta <- fasta[reordered_headers]
   
   write.fasta(sequences = reordered_fasta,names = names(reordered_fasta),nbchar = 60
-              ,open = "w",file.out = paste0(samp,".genome.fa")) 
+              ,open = "w",file.out = paste0(samp,".genome1.fa")) 
   
 file.remove("goodorderchrs.fa")

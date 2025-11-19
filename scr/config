@@ -15,8 +15,8 @@
 
      		 
 nt=16 # Number of threads
-inds=yS199 # Sample name
-post_filtering_coverage=30 # target covegare for filtlong
+inds=yS1080 # Sample name
+post_filtering_coverage=40 # target covegare for filtlong
 rounds=2 # rounds of long-read based polishing
 model="r1041_e82_400bps_sup_v4.3.0" # dorado model basecalling
 ont_type="--nano-hq"

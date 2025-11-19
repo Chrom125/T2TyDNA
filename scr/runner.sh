@@ -31,6 +31,12 @@ source ./config
 
 /usr/bin/time -v Rscript "$basedir/scr/reorderchrs.r" "$tmpdir" "$inds" > "$basedir/log/reorderchrs.log" 2> "$basedir/log/reorderchrs.err"
 
+### !
+/usr/bin/time -v bash "$basedir/scr/mapYLR163C.sh" > "$basedir/log/mapYLR163C.log" 2> "$basedir/log/mapYLR163C.err"
+
+/usr/bin/time -v Rscript "$basedir/scr/attempt_to_merge_chrXII_contigs.r" "$basedir" "$inds" > "$basedir/log/attempt_to_merge_chrXII_contigs.log" 2> "$basedir/log/attempt_to_merge_chrXII_contigs.err"
+###
+
 /usr/bin/time -v bash "$basedir/scr/assessment_reorderedchrs.sh" > "$basedir/log/assessment_reorderedchrs.log" 2> "$basedir/log/assessment_reorderedchrs.err"
 
 /usr/bin/time -v bash "$basedir/scr/backmapping" >  "$basedir/log/backmapping.log" 2> "$basedir/log/backmapping.err"
