@@ -23,8 +23,8 @@ The pipeline relies on a set of established bioinformatics tools.
 The installation environment is named **donatelo**. 
 
 ```sh
-mamba create -n donatelo -c conda-forge -c bioconda python=3.10 -y 
-mamba activate donatelo
+mamba create -n t2tydna -c conda-forge -c bioconda python=3.10 -y 
+mamba activate t2tydna
 ```
 
 The tools below can be installed as follows:
