@@ -150,6 +150,7 @@ mamba install -y -c conda-forge -c bioconda \
     quast=5.3.0 \
     busco=5.8.2 \
     minimap2=2.29 \
+    hifiasm=0.25.0 \
     racon=1.5.0 \
     medaka=2.0.1 \
     chopper=0.10.0 \
