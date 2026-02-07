@@ -160,6 +160,7 @@ mamba install -y -c conda-forge -c bioconda \
     pybedtools \
     emboss=6.6.0 \
     seqkit=2.10.1 \
+    fasta3=36.3.8 \
     mash=2.3 \
     r-base=4.3 \
     r-essentials \
