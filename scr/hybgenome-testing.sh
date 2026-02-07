@@ -70,14 +70,14 @@ mkdir -p nucmer
 
 for chr in chrI chrII chrIII chrIV chrV chrVI chrVII chrVIII chrIX chrX chrXI chrXII chrXIII chrXIV chrXV chrXVI; do
   nucmer -l 250 assembly.folded.srt.fasta ${chr}.pair.fa -p assembly_vs_${chr}-ref1-ref2
-  delta-filter -i 95 -l 5000 assembly_vs_${chr}-ref1-ref2.delta > assembly_vs_${chr}-ref1-ref2.filt.delta
+  delta-filter -l 5000 assembly_vs_${chr}-ref1-ref2.delta > assembly_vs_${chr}-ref1-ref2.filt.delta
   mummerplot --png --color -p assembly_vs_${chr}-ref1-ref2   assembly_vs_${chr}-ref1-ref2.delta
   mv assembly_vs_chr* nucmer
 done
   rm *pair*
 
 ## controllare eventuali translocations 
-nucmer -l 250 assembly.folded.srt.fasta parent1-parent2.renamed.fa -p assembly_vs_ref1-ref2
-delta-filter -i 95 -l 5000 assembly_vs_ref1-ref2.delta > assembly_vs_ref1-ref2.filt.delta
+nucmer -l 1000 assembly.folded.srt.fasta parent1-parent2.renamed.fa -p assembly_vs_ref1-ref2
+delta-filter -l 5000 assembly_vs_ref1-ref2.delta > assembly_vs_ref1-ref2.filt.delta
 mummerplot --png --color -p assembly_vs_ref1-ref2 assembly_vs_ref1-ref2.filt.delta
 mv assembly_vs_* nucmer
