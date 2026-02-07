@@ -15,7 +15,7 @@ p1=$(echo $parent1 | cut -d"." -f1)
 p2=$(echo $parent2 | cut -d"." -f1)
 
 sed "s/^>/>${p1}_/" $parent1 > parent1.renamed.fa
-sed "s/^>/>${p1}_/" $parent2 > parent2.renamed.fa 
+sed "s/^>/>${p2}_/" $parent2 > parent2.renamed.fa 
 
 for chr in chrI chrII chrIII chrIV chrV chrVI chrVII chrVIII chrIX chrX chrXI chrXII chrXIII chrXIV chrXV chrXVI; do
   seqkit grep -r -p "${chr}$" parent1.renamed.fa > ${chr}.p1.fa
