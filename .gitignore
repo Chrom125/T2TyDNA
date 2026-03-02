@@ -1,4 +1,7 @@
-results/
-data/
+results/*
+ressources/data/*
+ressources/misc/*
+ressources/rep/*
 logs/
+
 .snakemake/

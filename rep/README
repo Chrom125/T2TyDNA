@@ -1,4 +1,0 @@
-To populate this directory you can download a reference genome and related annotation from https://www.evomicslab.org/db/ScRAPdb/download.
-If you do so, plase, do not forget to cite the following paper: 
-Miao, Zepu, et al. "ScRAPdb: an integrated pan-omics database for the Saccharomyces cerevisiae reference assembly panel." Nucleic Acids Research 53.D1 (2025): D852-D863.
-Note that at least 1 ref genome and the corresponding annotation must be inside this folder
