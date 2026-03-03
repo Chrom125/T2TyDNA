@@ -4,4 +4,6 @@ ressources/misc/*
 ressources/rep/*
 logs/
 
+busco_downloads/
+
 .snakemake/

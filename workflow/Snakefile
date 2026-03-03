@@ -2,14 +2,19 @@ samples, = glob_wildcards("ressources/data/{sample}/{sample}.fastq.gz")
 
 rule all:
     input:
-        #expand("results/{sample}_mapped.sam", sample=samples),
-        #"results/Filtred_Results.csv"
-        #expand("results/{sample}/{sample}_tel_len.png", sample = samples),
-        #expand("results/{sample}/{sample}_filtered.fastq", sample=samples),
-        "results/common/tel_len.png"
+        "results/common/tel_len.png",
+        expand("results/{sample}/nucmer_results/nucmer.png", sample = samples),
+        expand("results/{sample}/quast_result/report.pdf", sample = samples),
+        directory(expand("results/{sample}/busco_results", sample = samples))
 
+#
+# Nicolo's pipeline
+#
 
 rule filtlong:
+    """
+    This rule filter all reads who has a length below 1000 and aim to get rid of the 10% worst reads.
+    """
     input:
         "ressources/data/{sample}/{sample}.fastq.gz"
     output:
@@ -27,6 +32,10 @@ rule filtlong:
         """
 
 rule assembly:
+    """
+    This is the rule making the assembly which is taking all the reads to form the genome.
+    Flye is used for the assembly.
+    """
     input:
         "results/{sample}/{sample}_filtered.fastq"
     output:
@@ -39,17 +48,138 @@ rule assembly:
     shadow: "minimal"
     shell:
         """
-        flye --nano-hq {input} --genome-size 12.5m --threads {threads} -i 2 --out-dir results/flye_tmp 2>{log}
-        cp results/flye_tmp/assembly.fasta {output}
+        flye --nano-hq {input} --genome-size 12.5m --threads {threads} --out-dir results/{wildcards.sample}/flye_tmp 2>{log}
+        cp results/{wildcards.sample}/flye_tmp/assembly.fasta {output}
         """
 
-#
-# Nicolo's pipeline
-#
+rule medaka:
+    """
+    Medaka is a tool to polish the assembly. Basically, it corrects some mistake in the assembly.
+    Apparently, it is made for long reads.
+    """
+    input:
+        assembly = "results/{sample}/{sample}_genome.fa",
+        reads = "results/{sample}/{sample}_filtered.fastq"
+    output:
+        "results/{sample}/{sample}_genome_polished.fa"
+    conda:
+        "medaka"
+    log:
+        "results/{sample}/logs/{sample}_polishing.log"
+    threads: 32
+    shell:
+        """
+        medaka_consensus -i {input.reads} -d {input.assembly} -o results/{wildcards.sample}/medaka_results -m r1041_e82_400bps_sup_v5.2.0 -t {threads}
+        mv results/{wildcards.sample}/medaka_results/consensus.fasta {output}
+        """
+
+rule chromosome_name:
+    """
+    After the assembly and polishing, the genome file is made from sequences called contig_42 or contig_35.
+    It is better to use the more correct name : chromosome.
+    This rule use ragtag to automate this process. By doing so, it is also trying to join the chromosome XII.
+    It wasn't part of nicolo's pipeline. Maybe it makes mistake?
+    """
+    input:
+        assembly = "results/{sample}/{sample}_genome_polished.fa",
+        reference = "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.fa"
+    output:
+        "results/{sample}/{sample}_genome_named.fa"
+    conda:
+        "test"
+    log:
+        "results/{sample}/logs/{sample}_naming.log"
+    shell:
+        """
+        ragtag.py scaffold {input.reference} {input.assembly} -o results/{wildcards.sample}/ragtag_output/
+        mv results/{wildcards.sample}/ragtag_output/ragtag.scaffold.fasta {output}
+        """
+
+rule reorder_chromosome:
+    """
+    Ragtag isn't great, it puts the chromosome 9 between the 4 and the 5. So the mummerplot coming after has some issue.
+    Moreover, it adds a "_ragtag" suffix to each chromosome.
+    This suffix is removed in this rule and the chromosome get correctly ordered in the fasta files.
+
+    WARNING : I remove also extrachromosomal DNA in this rule for now (since I only get the 16 chromosomes.)
+    """
+    input:
+        "results/{sample}/{sample}_genome_named.fa"
+    output:
+        "results/{sample}/{sample}_genome_ordered.fa"
+    conda:
+        "chromosome_management"
+    log:
+        "results/{sample}/logs/{sample}_naming_reordering.log"
+    script:
+        "scr/reorder_chromosome_after_naming.py"
+
+rule mummerplot:
+    """
+    This rule is to check the quality of the assembly.
+    Basically, the rule plot the assembly against a reference genome. If everything is going well, we have a beautiful straight line
+    of the form y = x in bright red.
+    """
+    input:
+        assembly = "results/{sample}/{sample}_genome_ordered.fa",
+        reference = "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.fa"
+    output:
+        "results/{sample}/nucmer_results/nucmer.png"
+    conda:
+        "t2tydna"
+    log:
+        "results/{sample}/logs/{sample}_mummerplot/log"
+    shell:
+        """
+        mkdir -p results/{wildcards.sample}/nucmer_results
+        nucmer -p results/{wildcards.sample}/nucmer_results/nucmer {input.reference} {input.assembly}
+        delta-filter -1 results/{wildcards.sample}/nucmer_results/nucmer.delta > results/{wildcards.sample}/nucmer_results/nucmer.delta_filter
+        mummerplot --large --color --png results/{wildcards.sample}/nucmer_results/nucmer.delta_filter -p results/{wildcards.sample}/nucmer_results/nucmer
+        """
+
+rule busco:
+    """
+    Busco is a tool to check the quality of the assembly.
+    It is looking for genes commonly found in species like S. cerevisiae.
+    If he found them all or almost them all, it is very good !
+    I often get something like more than 99% of them.
+    """
+    input:
+        assembly = "results/{sample}/{sample}_genome_ordered.fa"
+    output:
+        directory("results/{sample}/busco_results")
+    conda:
+        "busco"
+    log:
+        "results/{sample}/logs/{sample}_busco.log"
+    threads:
+        16
+    shell:
+        "busco -f -i {input.assembly} -m genome -l saccharomycetaceae_odb12 -c {threads} -o results/{wildcards.sample}/busco_results"
+
+rule quast:
+    """
+    Quast is a tool to check the quality of the assembly.
+    It gives you statistics like N50 (You take the sum from the largest reads to the shortest and you add them until you reach half of the assembly.
+    When you reach half, you take the length of the last reads taken.), L50 but also number of mismatch and everything.
+    For now, I have like 20 mismatches usually. I don't know if it's normal.
+    """
+    input:
+        assembly = "results/{sample}/{sample}_genome_ordered.fa",
+        reference = "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.fa"
+    output:
+        "results/{sample}/quast_result/report.pdf"
+    conda:
+        "test"
+    log:
+        "results/{sample}/logs/{sample}_quast_report.log"
+    shell:
+        "quast {input.assembly} -r {input.reference} -o results/{wildcards.sample}/quast_result"
+
 rule mapping_all:
     input:
         reads = "results/{sample}/{sample}_filtered.fastq",
-        assembly = "results/{sample}/{sample}_genome.fa"
+        assembly = "results/{sample}/{sample}_genome_ordered.fa"
     output:
         "results/{sample}/{sample}_mapped.sam"
     conda:
@@ -68,52 +198,3 @@ rule snv_counter:
         "{sample}_snv_table.csv"
     log:
         "results/{sample}/logs/{sample}_snv_count.log"
-    
-    
-
-#
-# Clothilde's pipeline
-#
-
-rule file_preparation_for_telomere_script:
-    input:
-        reads = "results/{sample}/{sample}_filtered.fastq",
-        assembly = "results/{sample}/{sample}_genome.fa"
-    output:
-        "results/{sample}/{sample}_data_position_table.tsv"
-    conda:
-        "telofinder"
-    log:
-        "results/{sample}/logs/{sample}_file_preparation.log"
-    script:
-        "scr/file_preparation_telomere.py"
-    
-rule telomere_length:
-    input:
-        table = "results/{sample}/{sample}_data_position_table.tsv",
-        reads = "results/{sample}/{sample}_filtered.fastq"
-    output:
-        "results/{sample}/{sample}_Filtred_Results.csv"
-    conda:
-        "telofinder"
-    log:
-        "results/{sample}/logs/{sample}_telomere_length.log"
-    threads:
-        8
-    shell:
-        """
-        python workflow/scr/get_telomere_length.py --input_data {input.table} --output_dir results/{wildcards.sample}/ --threads {threads} --intern_min_length 100 --only_trim
-        mv results/{wildcards.sample}/Filtred_Results.csv {output}
-        """
-
-rule plot_telomere_length:
-    input:
-        expand("results/{sample}/{sample}_Filtred_Results.csv", sample = samples)
-    output:
-        "results/common/tel_len.png"
-    conda:
-        "telofinder"
-    log:
-        "results/common/logs/plotting_telomere_length.log"
-    script:
-        "scr/telomere_view_results.py"

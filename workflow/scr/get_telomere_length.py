@@ -2,7 +2,7 @@
 
 # === USER CONFIGURATION REQUIRED ===
 # Please provide the full path to the telofinder.py file you downloaded or cloned.
-TELOFINDER_PATH = "/home/lsenez/analyse_semaine_1/telofinder/telofinder/main.py"
+TELOFINDER_PATH = "/home/lsenez/analyse/telofinder/telofinder/main.py"
 
 
 # === DO NOT MODIFY BELOW THIS LINE UNLESS NEEDED ===
