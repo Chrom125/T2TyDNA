@@ -12,6 +12,7 @@ rule all:
 #nclude: "rules/snv_counter.smk"
 include: "rules/telomere_length.smk"
 include: "rules/assembly_quality_analysis.smk"
+include: "rules/snv_counter.smk"
 
 rule chopper:
     """
@@ -130,7 +131,7 @@ rule chromosome_name:
     After the assembly and polishing, the genome file is made from sequences called contig_42 or contig_35.
     It is better to use the more correct name : chromosome.
     This rule use ragtag to automate this process. By doing so, it is also trying to join the chromosome XII.
-    It wasn't part of nicolo's pipeline. Maybe it makes mistake?
+    It wasn't part of nicolo's pipeline.
     """
     input:
         assembly = "results/{sample}/ragtag_output_correction/{sample}_genome_polished_corrected.fa",
@@ -149,8 +150,7 @@ rule chromosome_name:
 
 rule reorder_chromosome:
     """
-    Ragtag isn't great, it puts the chromosome 9 between the 4 and the 5. So the mummerplot coming after has some issue.
-    Moreover, it adds a "_ragtag" suffix to each chromosome.
+    Ragtag adds a "_ragtag" suffix to each chromosome.
     This suffix is removed in this rule and the chromosome get correctly ordered in the fasta files.
 
     WARNING : I remove also extrachromosomal DNA in this rule for now (since I only get the 16 chromosomes.)

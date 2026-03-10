@@ -1,8 +1,5 @@
 samples:
-  - OS13342
-  - Y2B1397
-  - B10
-  - H10
+  - A10
 
 references:
   - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.tidy.fa"
