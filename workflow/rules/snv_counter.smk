@@ -3,34 +3,34 @@ rule mapping_all:
         reads = "results/{sample}/{sample}_filtered.fastq",
         assembly = "results/{sample}/{sample}_genome_ordered.fa"
     output:
-        "results/{sample}/{sample}_mapped.sam"
+        "results/{sample}/{sample}_mapped.bam"
     conda:
         "t2tydna"
     log:
         "results/{sample}/logs/{sample}_assembly.log"
     threads: 8
     shell:
-        "minimap2 --eqx -ax map-ont -t {threads} {input.assembly} {input.reads} > {output} 2>{log}"
+        """
+        minimap2 -ax map-ont -t {threads} {input.assembly} {input.reads} | samtools sort -o {output}
+        """
 
-rule mpileup_convert:
+rule clair3:
     input:
-        "results/{sample}/{sample}_mapped.sam"
+        mapping = "results/{sample}/{sample}_mapped.bam"
+        reference = "results/{sample}/{sample}_genome_ordered.fa"
     output:
-        "results/{sample}/{sample}_mapped.pileup"
-    conda:
-        "snv_counter"
+        "results/{sample}/clair3_output/merge_output.vcf.gz"
+    threads: 32
     shell:
-        "samtools mpileup -B -A -f [index-dir]/chr16.fa  [path/to/bam-file] > [path/to/mpileup-file]"
-
-rule varscan:
-    input:
-        "results/{sample}/{sample}_mapped.pileup"
-    output:
-        "results/{sample}/{sample}_"
-    shell:
-        "varscan somatic [path/to/normal-pileup-file] [path/to/tumor-pileup-file] [path/to/output-basename]"
+        """
+        MODEL_NAME="r1041_e82_400bps_sup_v500"
+        run_clair3.sh --bam={input.mapping} --ref_fn={input.reference} --threads={threads} --platform="ont" --output="results/{sample}/clair3_output/" --model_path="${CONDA_PREFIX}/bin/models/${MODEL_NAME}" --include_all_ctgs
+        """
 
 rule snv_counter:
+    """
+    Reads from the .vcf.gz files made by clair3 to summarize the number of SNP and indels found in the files.
+    """
     input:
         assembly = expand("results/{sample}/{sample}_genome.fa", sample = samples),
         mapping = expand("results/{sample}/{sample}_mapped.sam", sample = samples)
@@ -38,3 +38,5 @@ rule snv_counter:
         "{sample}_snv_table.csv"
     log:
         "results/{sample}/logs/{sample}_snv_count.log"
+    script:
+        "../scr/snv_counter.py"

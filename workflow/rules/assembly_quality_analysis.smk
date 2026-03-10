@@ -6,7 +6,7 @@ rule mummerplot:
     """
     input:
         assembly = "results/{sample}/{sample}_genome_ordered.fa",
-        reference = "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.fa"
+        reference = config["references"]
     output:
         "results/{sample}/nucmer_results/nucmer.png"
     conda:
@@ -50,7 +50,7 @@ rule quast:
     """
     input:
         assembly = "results/{sample}/{sample}_genome_ordered.fa",
-        reference = "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.fa"
+        reference = config["references"]
     output:
         "results/{sample}/quast_result/report.pdf"
     conda:

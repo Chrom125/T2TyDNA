@@ -14,7 +14,7 @@ rule file_preparation_for_telomere_script:
     log:
         "results/{sample}/logs/{sample}_file_preparation.log"
     script:
-        "scr/file_preparation_telomere.py"
+        "../scr/file_preparation_telomere.py"
     
 rule telomere_length:
     """
@@ -53,4 +53,4 @@ rule plot_telomere_length:
     log:
         "results/common/logs/plotting_telomere_length.log"
     script:
-        "scr/telomere_view_results.py"
+        "../scr/telomere_view_results.py"
