@@ -12,7 +12,7 @@ for sn_input in snakemake.input:
     labels.append(label)
 
 print(data_list)
-
+plt.figure(figsize=(16, 8))
 plt.boxplot(data_list, labels=labels, showfliers=False)
 plt.title("Length of telomeres by sample")
 plt.ylabel("Base pairs (bp)")

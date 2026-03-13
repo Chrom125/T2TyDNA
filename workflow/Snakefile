@@ -13,6 +13,7 @@ rule all:
 include: "rules/telomere_length.smk"
 include: "rules/assembly_quality_analysis.smk"
 include: "rules/snv_counter.smk"
+include: "rules/repeats_analysis.smk"
 
 rule chopper:
     """

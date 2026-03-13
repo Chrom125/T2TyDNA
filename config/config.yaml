@@ -1,5 +1,7 @@
 samples:
-  - A10
+ - SRR37421626
+
 
 references:
-  - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.tidy.fa"
+#  - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.tidy.fa"
+  - "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.fa"
