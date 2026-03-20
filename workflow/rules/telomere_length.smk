@@ -8,7 +8,7 @@ rule file_preparation_for_telomere_script:
         reads = "results/{sample}/{sample}_filtered.fastq",
         assembly = "results/{sample}/{sample}_genome_ordered.fa"
     output:
-        "results/{sample}/{sample}_data_position_table.tsv"
+        temp("results/{sample}/{sample}_data_position_table.tsv")
     conda:
         "telofinder"
     log:
@@ -47,7 +47,7 @@ rule plot_telomere_length:
     input:
         expand("results/{sample}/{sample}_Filtred_Results.csv", sample = samples)
     output:
-        "results/common/tel_len.png"
+        report("results/common/tel_len.png")
     conda:
         "telofinder"
     log:

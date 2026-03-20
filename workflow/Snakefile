@@ -4,12 +4,13 @@ samples = config.get("samples", [])
 
 rule all:
     input:
-        "results/common/tel_len.png",
-        expand("results/{sample}/nucmer_results/nucmer.png", sample = samples),
-        expand("results/{sample}/quast_result/report.pdf", sample = samples),
-        directory(expand("results/{sample}/busco_results", sample = samples))
+        #"results/common/tel_len.png",
+        #expand("results/{sample}/nucmer_results/nucmer_mqc.png", sample = samples),
+        #expand("results/{sample}/quast_results/report.pdf", sample = samples),
+        #expand("results/{sample}/busco_results.tsv", sample = samples)
+        expand("results/{sample}/summary_variant_counter.csv", sample = samples),
+        expand("results/{sample}/multiqc_report.html", sample = samples)
 
-#nclude: "rules/snv_counter.smk"
 include: "rules/telomere_length.smk"
 include: "rules/assembly_quality_analysis.smk"
 include: "rules/snv_counter.smk"
@@ -22,11 +23,13 @@ rule chopper:
     input:
         "ressources/data/{sample}/{sample}.fastq.gz"
     output:
-        "results/{sample}/{sample}_filtered.fastq"
+       "results/{sample}/{sample}_filtered.fastq"
     conda:
         "t2tydna"
+    log:
+        "results/{sample}/logs/{sample}_chopper.log"
     shell:
-        "chopper -q 15 -l 10000 -i {input} > {output}"
+        "chopper -q 15 -l 10000 -i {input} > {output} 2>{log}"
 
 rule filtlong:
     """
@@ -36,7 +39,7 @@ rule filtlong:
     input:
         "results/{sample}/{sample}_filtered.fastq"
     output:
-        "results/{sample}/{sample}_limited_for_assembly.fastq"
+        temp("results/{sample}/{sample}_limited_for_assembly.fastq")
     params:
         results_directory = "results/{sample}"
     conda:
@@ -46,7 +49,7 @@ rule filtlong:
     shell:
         """
         mkdir -p {params.results_directory}
-        filtlong --target_bases 1000000000 {input} > {output}
+        filtlong --target_bases 1000000000 {input} > {output} 2>{log}
         """
 
 rule assembly:
@@ -116,15 +119,16 @@ rule correct_chromosome:
         reference = config["references"],
         assembly = "results/{sample}/{sample}_genome_polished.fa"
     output:
-        "results/{sample}/ragtag_output_correction/{sample}_genome_polished_corrected.fa"
+        temp("results/{sample}/{sample}_genome_polished_corrected.fa")
     conda:
         "test"
     log:
         "results/{sample}/logs/ragtag_correction.log"
+    shadow: "minimal"
     shell:
         """
-        ragtag.py correct {input.reference} {input.assembly} -o results/{wildcards.sample}/ragtag_output_correction
-        mv results/{wildcards.sample}/ragtag_output_correction/ragtag.correct.fasta {output}
+        ragtag.py correct {input.reference} {input.assembly} -o ragtag_output_correction
+        mv ragtag_output_correction/ragtag.correct.fasta {output}
         """
 
 rule chromosome_name:
@@ -135,18 +139,19 @@ rule chromosome_name:
     It wasn't part of nicolo's pipeline.
     """
     input:
-        assembly = "results/{sample}/ragtag_output_correction/{sample}_genome_polished_corrected.fa",
+        assembly = "results/{sample}/{sample}_genome_polished_corrected.fa",
         reference = config["references"]
     output:
-        "results/{sample}/{sample}_genome_named.fa"
+        temp("results/{sample}/{sample}_genome_named.fa")
     conda:
         "test"
     log:
         "results/{sample}/logs/{sample}_naming.log"
+    shadow: "minimal"
     shell:
         """
-        ragtag.py scaffold {input.reference} {input.assembly} -o results/{wildcards.sample}/ragtag_output/
-        mv results/{wildcards.sample}/ragtag_output/ragtag.scaffold.fasta {output}
+        ragtag.py scaffold {input.reference} {input.assembly} -o ragtag_output/ 2>{log}
+        mv ragtag_output/ragtag.scaffold.fasta {output}
         """
 
 rule reorder_chromosome:
@@ -166,3 +171,15 @@ rule reorder_chromosome:
         "results/{sample}/logs/{sample}_naming_reordering.log"
     script:
         "scr/reorder_chromosome_after_naming.py"
+
+rule multi_qc:
+    input:
+        "results/{sample}/nucmer_results/nucmer_mqc.png",
+        "results/{sample}/busco_results/short_summary.specific.saccharomycetaceae_odb12.busco_results.json",
+        "results/{sample}/quast_results/report.pdf"
+    output:
+        "results/{sample}/multiqc_report.html"
+    conda:
+        "multiqc"
+    shell:
+        "multiqc results/{wildcards.sample} --no-ai --clean-up --no-data-dir --outdir results/{wildcards.sample}"

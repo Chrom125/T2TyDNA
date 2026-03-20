@@ -1,3 +1,5 @@
+import json
+
 rule mummerplot:
     """
     This rule is to check the quality of the assembly.
@@ -8,17 +10,16 @@ rule mummerplot:
         assembly = "results/{sample}/{sample}_genome_ordered.fa",
         reference = config["references"]
     output:
-        "results/{sample}/nucmer_results/nucmer.png"
+        report("results/{sample}/nucmer_results/nucmer_mqc.png", category = "{sample}")
     conda:
         "t2tydna"
     log:
         "results/{sample}/logs/{sample}_mummerplot/log"
     shell:
         """
-        mkdir -p results/{wildcards.sample}/nucmer_results
         nucmer -p results/{wildcards.sample}/nucmer_results/nucmer {input.reference} {input.assembly}
         delta-filter -1 results/{wildcards.sample}/nucmer_results/nucmer.delta > results/{wildcards.sample}/nucmer_results/nucmer.delta_filter
-        mummerplot --large --color --png results/{wildcards.sample}/nucmer_results/nucmer.delta_filter -p results/{wildcards.sample}/nucmer_results/nucmer
+        mummerplot --large --color --png results/{wildcards.sample}/nucmer_results/nucmer.delta_filter -p results/{wildcards.sample}/nucmer_results/nucmer_mqc
         """
 
 rule busco:
@@ -31,7 +32,7 @@ rule busco:
     input:
         assembly = "results/{sample}/{sample}_genome_ordered.fa"
     output:
-        directory("results/{sample}/busco_results")
+        "results/{sample}/busco_results/short_summary.specific.saccharomycetaceae_odb12.busco_results.json"
     conda:
         "busco"
     log:
@@ -39,7 +40,36 @@ rule busco:
     threads:
         16
     shell:
-        "busco -f -i {input.assembly} -m genome -l saccharomycetaceae_odb12 -c {threads} -o results/{wildcards.sample}/busco_results"
+        """
+        busco -f -i {input.assembly} -m genome -l saccharomycetaceae_odb12 -c {threads} -o results/{wildcards.sample}/busco_results
+        """
+
+# rule parse_json_busco:
+#     """
+#     Parsing the BUSCO code to get all the data into a csv files for the report.
+#     """
+#     input:
+#         json = "results/{sample}/busco_results/short_summary.specific.saccharomycetaceae_odb12.busco_results.json"
+#     output:
+#         tsv = report("results/{sample}/busco_results.tsv", category = "{sample}")
+#     run:
+#         with open(input.json, 'r') as f:
+#             data = json.load(f)
+        
+#         s = data["results"]
+#         line = {
+#             "Sample": wildcards.sample,
+#             "Complete": s["Complete percentage"],
+#             "Single": s["Single copy percentage"],
+#             "Multi copy percentage": s["Multi copy percentage"],
+#             "Fragmented": s["Fragmented percentage"],
+#             "Missing": s["Missing percentage"],
+#             "Total": data["lineage_dataset"]["number_of_buscos"]
+#         }
+
+#         with open(output.tsv, 'w') as f:
+#             f.write("\t".join(line.keys()) + "\n")
+#             f.write("\t".join(str(x) for x in line.values()) + "\n")
 
 rule quast:
     """
@@ -52,10 +82,10 @@ rule quast:
         assembly = "results/{sample}/{sample}_genome_ordered.fa",
         reference = config["references"]
     output:
-        "results/{sample}/quast_result/report.pdf"
+        "results/{sample}/quast_results/report.pdf"
     conda:
         "test"
     log:
         "results/{sample}/logs/{sample}_quast_report.log"
     shell:
-        "quast {input.assembly} -r {input.reference} -o results/{wildcards.sample}/quast_result"
+        "quast {input.assembly} -r {input.reference} -o results/{wildcards.sample}/quast_results"

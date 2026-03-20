@@ -3,9 +3,9 @@ rule mapping_all:
         reads = "results/{sample}/{sample}_filtered.fastq",
         assembly = "results/{sample}/{sample}_genome_ordered.fa",
     output:
-        bam = "results/{sample}/{sample}_mapped.bam",
-        bai = "results/{sample}/{sample}_mapped.bam.bai",
-        faidx = "results/{sample}/{sample}_genome_ordered.fa.fai"
+        bam = temp("results/{sample}/{sample}_mapped.bam"),
+        bai = temp("results/{sample}/{sample}_mapped.bam.bai"),
+        faidx = temp("results/{sample}/{sample}_genome_ordered.fa.fai")
     conda:
         "t2tydna"
     log:
@@ -21,10 +21,12 @@ rule mapping_all:
 rule clair3:
     input:
         mapping = "results/{sample}/{sample}_mapped.bam",
-        reference = "results/{sample}/{sample}_genome_ordered.fa"
+        mapping_indexed = "results/{sample}/{sample}_mapped.bam.bai",
+        reference = "results/{sample}/{sample}_genome_ordered.fa",
+        faidx = "results/{sample}/{sample}_genome_ordered.fa.fai"
     output:
         "results/{sample}/clair3_output/merge_output.vcf.gz"
-    threads: 32
+    threads: 8
     log:
         "results/{sample}/logs/{sample}_clair3.log"
     params:
@@ -41,7 +43,7 @@ rule clair3:
         --platform="ont" \
         --model_path="/home/lsenez/analyse/Clair3/models/r1041_e82_400bps_sup_v500" \
         --output=results/{wildcards.sample}/clair3_output/ \
-        --include_all_ctgs
+        --include_all_ctgs 2>{log}
           """
 
 rule snv_counter:
@@ -49,5 +51,7 @@ rule snv_counter:
         "results/{sample}/clair3_output/merge_output.vcf.gz"
     output:
         "results/{sample}/summary_variant_counter.csv"
-    script:
-        "scr/snv_counter.py"
+    shell:
+        """
+        bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\n' {input} | sort -V -k1,1 -k2,2n > {output}
+        """
