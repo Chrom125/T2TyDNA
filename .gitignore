@@ -7,3 +7,4 @@ logs/
 busco_downloads/
 
 .snakemake/
+.vscode/

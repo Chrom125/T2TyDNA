@@ -3,8 +3,8 @@ rule mapping_all:
         reads = "results/{sample}/{sample}_filtered.fastq",
         assembly = "results/{sample}/{sample}_genome_ordered.fa",
     output:
-        bam = temp("results/{sample}/{sample}_mapped.bam"),
-        bai = temp("results/{sample}/{sample}_mapped.bam.bai"),
+        bam = "results/{sample}/{sample}_mapped.bam",
+        bai = "results/{sample}/{sample}_mapped.bam.bai",
         faidx = temp("results/{sample}/{sample}_genome_ordered.fa.fai")
     conda:
         "t2tydna"

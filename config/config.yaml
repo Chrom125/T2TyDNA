@@ -1,13 +1,33 @@
 samples:
-  - G50_25_DOXY
-  - G100_25_DOXY
-  - G150_25_DOXY
-  - G600_CAS_25_DOXY_Rep1
-  - G600_CAS_25_DOXY_Rep2
+- G50_YPD
+- G50_Doxy-1
+- G50_Doxy-2
+- G50_Doxy-3
+- G50_Doxy-4
+- G50_Doxy-5 
+- G100_YPD
+- G100_Doxy-1
+- G100_Doxy-2
+- G100_Doxy-3
+- G100_Doxy-4
+- G100_Doxy-5
+- G150_YPD
+- G150_Doxy-1
+- G150_Doxy-2
+- G150_Doxy-3
+- G150_Doxy-4
+- G150_Doxy-5 
+- G300_YPD
+- G300_Doxy-1
+- G300_Doxy-2
+- G300_Doxy-3
+- G300_Doxy-4
+- G300_Doxy-5
 
 references:
-  - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.tidy.fa"
-#  - "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.fa"
+#  - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.tidy.fa"
+  - "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.fa"
 
 annotation:
- - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.tidy.gff3"
+# - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.tidy.gff3"
+ - "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.gff3"

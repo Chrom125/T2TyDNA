@@ -9,12 +9,14 @@ rule all:
         #expand("results/{sample}/quast_results/report.pdf", sample = samples),
         #expand("results/{sample}/busco_results.tsv", sample = samples)
         expand("results/{sample}/summary_variant_counter.csv", sample = samples),
-        expand("results/{sample}/multiqc_report.html", sample = samples)
+        #expand("results/{sample}/multiqc_report.html", sample = samples)
+        expand("results/{sample}/{sample}_annotation.gff3", sample = samples)
 
 include: "rules/telomere_length.smk"
 include: "rules/assembly_quality_analysis.smk"
 include: "rules/snv_counter.smk"
 include: "rules/repeats_analysis.smk"
+include: "rules/aneuploidie_analysis.smk"
 
 rule chopper:
     """
@@ -171,6 +173,25 @@ rule reorder_chromosome:
         "results/{sample}/logs/{sample}_naming_reordering.log"
     script:
         "scr/reorder_chromosome_after_naming.py"
+
+rule annotate:
+    """
+    Using liftoff and a reference to get the coordinate of the different genes.
+    """
+    input:
+        target = "results/{sample}/{sample}_genome_ordered.fa",
+        ref = config["references"],
+        annotation = config["annotation"]
+    output:
+        "results/{sample}/{sample}_annotation.gff3"
+    conda:
+        "liftoff"
+    log:
+        "results/{sample}/logs/{sample}_annotation.log"
+    shadow: "minimal"
+    shell:
+        "liftoff {input.target} {input.ref} -g {input.annotation} -o {output} 2>{log}"
+    
 
 rule multi_qc:
     input:
