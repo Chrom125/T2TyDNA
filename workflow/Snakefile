@@ -5,12 +5,12 @@ samples = config.get("samples", [])
 rule all:
     input:
         #"results/common/tel_len.png",
-        #expand("results/{sample}/nucmer_results/nucmer_mqc.png", sample = samples),
-        #expand("results/{sample}/quast_results/report.pdf", sample = samples),
-        #expand("results/{sample}/busco_results.tsv", sample = samples)
-        expand("results/{sample}/summary_variant_counter.csv", sample = samples),
+        #expand("results/{sample}/{sample}_Filtred_Results.csv", sample = samples),
+        #expand("results/{sample}/summary_variant_counter.csv", sample = samples),
         #expand("results/{sample}/multiqc_report.html", sample = samples)
-        expand("results/{sample}/{sample}_annotation.gff3", sample = samples)
+        #expand("results/{sample}/{sample}_annotation.gff3", sample = samples)
+        #expand("results/{sample}/coverage_bp.png", sample = samples)
+        expand("results/{sample}/reference_sample.fa", sample = samples)
 
 include: "rules/telomere_length.smk"
 include: "rules/assembly_quality_analysis.smk"
@@ -84,16 +84,17 @@ rule medaka:
         assembly = "results/{sample}/{sample}_genome.fa",
         reads = "results/{sample}/{sample}_filtered.fastq"
     output:
-        "results/{sample}/{sample}_genome_polished.fa"
+        genome = "results/{sample}/{sample}_genome_polished.fa",
     conda:
         "medaka"
     log:
         "results/{sample}/logs/{sample}_polishing.log"
     threads: 32
+    shadow: "minimal"
     shell:
         """
-        medaka_consensus -i {input.reads} -d {input.assembly} -o results/{wildcards.sample}/medaka_results -m r1041_e82_400bps_sup_v5.2.0 -t {threads}
-        mv results/{wildcards.sample}/medaka_results/consensus.fasta {output}
+        medaka_consensus -i {input.reads} -d {input.assembly} -o medaka_results -m r1041_e82_400bps_sup_v5.2.0 -t {threads}
+        mv medaka_results/consensus.fasta {output.genome}
         """
 
 rule mash:
@@ -104,21 +105,23 @@ rule mash:
         assembly = "results/{sample}/{sample}_genome_polished.fa",
         possible_references = config["references"]
     output:
-        reference = "results/{sample}/reference_sample.fa"
+        reference = "results/{sample}/reference_sample.fa",
+        annotation = "results/{sample}/reference_annotation.gff3"
     conda:
         "t2tydna"
     log:
         "results/{sample}/logs/{sample}_mash.log"
     shell:
         """
-        BEST_PATH=$(mash dist {input.assembly} {input.possible_references} | sort -gk3 | head -n 1 | cut -f1)
+        BEST_PATH=$(mash dist {input.assembly} {input.possible_references} | sort -gk3 | head -n 1 | cut -f2)
         echo "$BEST_PATH"
-        cp "$BEST_PATH" {output}
+        cp "$BEST_PATH" {output.reference}
+        cp "${{BEST_PATH//.fa/.gff3}}" {output.annotation}
         """
 
 rule correct_chromosome:
     input:
-        reference = config["references"],
+        reference = "results/{sample}/reference_sample.fa",
         assembly = "results/{sample}/{sample}_genome_polished.fa"
     output:
         temp("results/{sample}/{sample}_genome_polished_corrected.fa")
@@ -142,7 +145,7 @@ rule chromosome_name:
     """
     input:
         assembly = "results/{sample}/{sample}_genome_polished_corrected.fa",
-        reference = config["references"]
+        reference = "results/{sample}/reference_sample.fa"
     output:
         temp("results/{sample}/{sample}_genome_named.fa")
     conda:
@@ -180,8 +183,8 @@ rule annotate:
     """
     input:
         target = "results/{sample}/{sample}_genome_ordered.fa",
-        ref = config["references"],
-        annotation = config["annotation"]
+        ref = "results/{sample}/reference_sample.fa",
+        annotation = "results/AG0/reference_annotation.gff3"
     output:
         "results/{sample}/{sample}_annotation.gff3"
     conda:

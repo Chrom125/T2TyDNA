@@ -1,11 +1,10 @@
 rule mapping_all:
     input:
         reads = "results/{sample}/{sample}_filtered.fastq",
-        assembly = "results/{sample}/{sample}_genome_ordered.fa",
+        assembly = "results/AG0/AG0_genome_ordered.fa",
     output:
         bam = "results/{sample}/{sample}_mapped.bam",
         bai = "results/{sample}/{sample}_mapped.bam.bai",
-        faidx = temp("results/{sample}/{sample}_genome_ordered.fa.fai")
     conda:
         "t2tydna"
     log:
@@ -22,11 +21,11 @@ rule clair3:
     input:
         mapping = "results/{sample}/{sample}_mapped.bam",
         mapping_indexed = "results/{sample}/{sample}_mapped.bam.bai",
-        reference = "results/{sample}/{sample}_genome_ordered.fa",
-        faidx = "results/{sample}/{sample}_genome_ordered.fa.fai"
+        reference = "results/AG0/AG0_genome_ordered.fa",
+        faidx = "results/AG0/AG0_genome_ordered.fa.fai"
     output:
         "results/{sample}/clair3_output/merge_output.vcf.gz"
-    threads: 8
+    threads: 32
     log:
         "results/{sample}/logs/{sample}_clair3.log"
     params:
@@ -53,5 +52,7 @@ rule snv_counter:
         "results/{sample}/summary_variant_counter.csv"
     shell:
         """
-        bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\n' {input} | sort -V -k1,1 -k2,2n > {output}
+        bcftools view -i 'QUAL > 20 && FORMAT/DP > 10 && FORMAT/AF >= 0.1' {input} -O z -o results/{wildcards.sample}/clair3_output/final_variants.vcf.gz
+        bcftools index results/{wildcards.sample}/clair3_output/final_variants.vcf.gz
+        bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FORMAT\n' results/{wildcards.sample}/clair3_output/final_variants.vcf.gz | sort -V -k1,1 -k2,2n > {output}
         """

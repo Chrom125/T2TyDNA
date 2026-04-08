@@ -3,8 +3,12 @@ ressources/data/*
 ressources/misc/*
 ressources/rep/*
 logs/
-
+blast/
 busco_downloads/
+
+hifiasm/
+hifiasm2/
+hifiasm3/
 
 .snakemake/
 .vscode/

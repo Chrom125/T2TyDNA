@@ -18,7 +18,8 @@ order = [
     "chrXIII_RagTag",
     "chrXIV_RagTag",
     "chrXV_RagTag",
-    "chrXVI_RagTag"
+    "chrXVI_RagTag",
+#    "chrMT_RagTag"
 ]
 
 ordered_records = [record_dict[name] for name in order if name in record_dict]
