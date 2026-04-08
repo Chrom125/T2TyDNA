@@ -8,11 +8,11 @@ rule mummerplot:
     """
     input:
         assembly = "results/{sample}/{sample}_genome_ordered.fa",
-        reference = config["references"]
+        reference = "results/{sample}/reference_sample.fa"
     output:
         report("results/{sample}/nucmer_results/nucmer_mqc.png", category = "{sample}")
     conda:
-        "t2tydna"
+        "../envs/mummer.yaml"
     log:
         "results/{sample}/logs/{sample}_mummerplot/log"
     shell:
@@ -34,7 +34,7 @@ rule busco:
     output:
         "results/{sample}/busco_results/short_summary.specific.saccharomycetaceae_odb12.busco_results.json"
     conda:
-        "busco"
+        "../envs/busco.yaml"
     log:
         "results/{sample}/logs/{sample}_busco.log"
     threads:
@@ -80,11 +80,11 @@ rule quast:
     """
     input:
         assembly = "results/{sample}/{sample}_genome_ordered.fa",
-        reference = config["references"]
+        reference = "results/{sample}/reference_sample.fa"
     output:
         "results/{sample}/quast_results/report.pdf"
     conda:
-        "test"
+        "../envs/quast.yaml"
     log:
         "results/{sample}/logs/{sample}_quast_report.log"
     shell:

@@ -1,0 +1,6 @@
+channels:
+ - bioconda
+
+dependencies:
+ - flye=2.9.6
+ - seqkit=2.10.1

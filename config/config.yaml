@@ -1,6 +1,5 @@
 samples:
- - AG0
- - G50_1_DOXY
+ - A10
 
 references:
   - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.tidy.fa"

@@ -4,13 +4,8 @@ samples = config.get("samples", [])
 
 rule all:
     input:
-        #"results/common/tel_len.png",
-        #expand("results/{sample}/{sample}_Filtred_Results.csv", sample = samples),
-        #expand("results/{sample}/summary_variant_counter.csv", sample = samples),
-        #expand("results/{sample}/multiqc_report.html", sample = samples)
-        #expand("results/{sample}/{sample}_annotation.gff3", sample = samples)
-        #expand("results/{sample}/coverage_bp.png", sample = samples)
-        expand("results/{sample}/reference_sample.fa", sample = samples)
+        expand("results/{sample}/multiqc_report.html", sample = samples)
+
 
 include: "rules/telomere_length.smk"
 include: "rules/assembly_quality_analysis.smk"
@@ -27,7 +22,7 @@ rule chopper:
     output:
        "results/{sample}/{sample}_filtered.fastq"
     conda:
-        "t2tydna"
+        "envs/chopper.yaml"
     log:
         "results/{sample}/logs/{sample}_chopper.log"
     shell:
@@ -45,7 +40,7 @@ rule filtlong:
     params:
         results_directory = "results/{sample}"
     conda:
-        "t2tydna"
+        "envs/filtlong.yaml"
     log:
         "results/{sample}/logs/{sample}_filtlong.log"
     shell:
@@ -64,7 +59,7 @@ rule assembly:
     output:
         "results/{sample}/{sample}_genome.fa"
     conda:
-        "t2tydna"
+        "envs/assembly.yaml"
     log:
         "results/{sample}/logs/{sample}_assembly.log"
     threads: 32
@@ -86,7 +81,7 @@ rule medaka:
     output:
         genome = "results/{sample}/{sample}_genome_polished.fa",
     conda:
-        "medaka"
+        "envs/medaka.yaml"
     log:
         "results/{sample}/logs/{sample}_polishing.log"
     threads: 32
@@ -108,7 +103,7 @@ rule mash:
         reference = "results/{sample}/reference_sample.fa",
         annotation = "results/{sample}/reference_annotation.gff3"
     conda:
-        "t2tydna"
+        "envs/mash.yaml"
     log:
         "results/{sample}/logs/{sample}_mash.log"
     shell:
@@ -126,7 +121,7 @@ rule correct_chromosome:
     output:
         temp("results/{sample}/{sample}_genome_polished_corrected.fa")
     conda:
-        "test"
+        "envs/ragtag.yaml"
     log:
         "results/{sample}/logs/ragtag_correction.log"
     shadow: "minimal"
@@ -149,7 +144,7 @@ rule chromosome_name:
     output:
         temp("results/{sample}/{sample}_genome_named.fa")
     conda:
-        "test"
+        "envs/ragtag.yaml"
     log:
         "results/{sample}/logs/{sample}_naming.log"
     shadow: "minimal"
@@ -171,7 +166,7 @@ rule reorder_chromosome:
     output:
         "results/{sample}/{sample}_genome_ordered.fa"
     conda:
-        "chromosome_management"
+        "envs/reorder_chromosome.yaml"
     log:
         "results/{sample}/logs/{sample}_naming_reordering.log"
     script:
@@ -188,7 +183,7 @@ rule annotate:
     output:
         "results/{sample}/{sample}_annotation.gff3"
     conda:
-        "liftoff"
+        "envs/liftoff.yaml"
     log:
         "results/{sample}/logs/{sample}_annotation.log"
     shadow: "minimal"
@@ -204,6 +199,6 @@ rule multi_qc:
     output:
         "results/{sample}/multiqc_report.html"
     conda:
-        "multiqc"
+        "envs/multiqc.yaml"
     shell:
         "multiqc results/{wildcards.sample} --no-ai --clean-up --no-data-dir --outdir results/{wildcards.sample}"
