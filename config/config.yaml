@@ -1,9 +1,13 @@
 samples:
- - A10
+ - G50_25_DOXY
+ - G100_25_DOXY
+ - G150_25_DOXY
+ - G600_CAS_25_DOXY_Rep1
+ - G600_CAS_25_DOXY_Rep2
 
 references:
-  - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.tidy.fa"
-  - "ressources/rep/BY.asm01.HP0.nuclear_genome.tidy.fa"
+  - "ressources/rep/CAS_1a.asm01.HP0.nuclear_genome.system.fa"
+  - "ressources/rep/BY.asm01.HP0.nuclear_genome.system.fa"
   - "ressources/rep/YPS128.asm01.HP0.nuclear_genome.tidy.fa"
   - "ressources/rep/DBVPG6765.asm01.HP0.nuclear_genome.tidy.fa"
 

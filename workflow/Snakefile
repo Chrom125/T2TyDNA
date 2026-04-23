@@ -1,10 +1,12 @@
+import os
+
 configfile: "config/config.yaml"
 
 samples = config.get("samples", [])
 
 rule all:
     input:
-        expand("results/{sample}/multiqc_report.html", sample = samples)
+        expand("results/{sample}/summary_variant_counter_cleaned.csv", sample = samples)
 
 
 include: "rules/telomere_length.smk"
@@ -12,6 +14,18 @@ include: "rules/assembly_quality_analysis.smk"
 include: "rules/snv_counter.smk"
 include: "rules/repeats_analysis.smk"
 include: "rules/aneuploidie_analysis.smk"
+
+# rule convert_to_fastq:
+#     input:
+#         reads = "ressources/data/{sample}/{sample}.bam"
+#     output:
+#         "ressources/data/{sample}/{sample}.fastq.gz"
+#     conda:
+#         "t2tydna"
+#     shell:
+#         """
+#         samtools fastq {input.reads} | gzip > {output}
+#         """
 
 rule chopper:
     """
@@ -88,7 +102,7 @@ rule medaka:
     shadow: "minimal"
     shell:
         """
-        medaka_consensus -i {input.reads} -d {input.assembly} -o medaka_results -m r1041_e82_400bps_sup_v5.2.0 -t {threads}
+        medaka_consensus -b 50 -i {input.reads} -d {input.assembly} -o medaka_results -m r1041_e82_400bps_sup_v5.2.0 -t {threads}
         mv medaka_results/consensus.fasta {output.genome}
         """
 
